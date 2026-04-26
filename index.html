@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>Cipher Tool - Classic</title>
+    <style>
+        /* 字體整體放大，並保持黑客綠風格 */
+        body { 
+            background: #121212; 
+            color: #00ff00; 
+            font-family: monospace; 
+            padding: 30px; 
+            font-size: 1.3rem; 
+        }
+        .container { max-width: 900px; margin: auto; }
+        
+        /* 輸入框放大 */
+        textarea { 
+            width: 100%; 
+            background: #1e1e1e; 
+            color: #fff; 
+            border: 2px solid #333; 
+            padding: 15px; 
+            font-size: 1.3rem; 
+            border-radius: 5px;
+        }
+        
+        /* 按鈕放大與美化 */
+        button { 
+            background: #333; 
+            color: #00ff00; 
+            border: 1px solid #00ff00; 
+            padding: 15px 30px; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            font-size: 1.2rem; 
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        button:hover { background: #00ff00; color: #000; box-shadow: 0 0 10px #00ff00; }
+        
+        /* 結果框 */
+        .result-box { 
+            margin-top: 25px; 
+            white-space: pre-wrap; 
+            background: #000; 
+            padding: 20px; 
+            border-left: 8px solid #00ff00; 
+            min-height: 100px;
+        }
+
+        /* 專屬簽名 */
+        .cool-text {
+            margin-top: 40px;
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-align: center;
+            text-shadow: 3px 3px 10px #00ff00;
+        }
+
+        h1 { font-size: 2.5rem; text-shadow: 0 0 5px #00ff00; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cipher Tool</h1>
+        <textarea id="input" rows="5" placeholder="在此輸入文字或密文..."></textarea>
+        
+        <div>
+            <button onclick="runCaesar()">Caesar</button>
+            <button onclick="runAtbash()">Atbash</button>
+            <button onclick="runASCII()">ASCII</button>
+        </div>
+
+        <div id="output" class="result-box">Loading...</div>
+
+        <div class="cool-text">承蔚老帥了</div>
+    </div>
+
+    <script>
+        // Caesar (ROT) 邏輯
+        function rot(str, shift) {
+            return str.replace(/[a-zA-Z]/g, function(c) {
+                const start = c <= 'Z' ? 65 : 97;
+                return String.fromCharCode(((c.charCodeAt(0) - start + shift) % 26) + start);
+            });
+        }
+
+        // Atbash 邏輯
+        function atbash(str) {
+            return str.replace(/[a-zA-Z]/g, function(c) {
+                const base = c <= 'Z' ? 65 + 90 : 97 + 122;
+                return String.fromCharCode(base - c.charCodeAt(0));
+            });
+        }
+
+        // ASCII 轉換邏輯
+        function toASCII(str) {
+            return str.split('').map(c => c.charCodeAt(0)).join(' ');
+        }
+
+        function runCaesar() {
+            let input = document.getElementById('input').value;
+            let res = "Caesar Brute Force (1-25):\n" + "=".repeat(25) + "\nSHFT | DATA\n";
+            for (let i = 1; i < 26; i++) {
+                res += i.toString().padStart(4, ' ') + " | " + rot(input, i) + "\n";
+            }
+            document.getElementById('output').innerText = res;
+        }
+
+        function runAtbash() {
+            let input = document.getElementById('input').value;
+            let res = "Atbash 鏡像結果:\n" + "=".repeat(25) + "\n" + atbash(input);
+            document.getElementById('output').innerText = res;
+        }
+
+        function runASCII() {
+            let input = document.getElementById('input').value;
+            let res = "ASCII Decimal 編碼:\n" + "=".repeat(25) + "\n" + toASCII(input);
+            document.getElementById('output').innerText = res;
+        }
+    </script>
+</body>
+</html>
