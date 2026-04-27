@@ -123,20 +123,20 @@
 
     <nav class="sidebar" id="sidebar">
         <button class="icon-btn" style="position:absolute; top:15px; left:15px;" onclick="toggleSidebar()">✕</button>
-        <a href="#" class="sidebar-link" onclick="showSection('classic')">📜 古密碼</a>
-        <a href="#" class="sidebar-link" onclick="showSection('modern')">💻 現代密碼</a>
-        <a href="#" class="sidebar-link" onclick="showSection('game')">🦖 小恐龍遊戲</a>
-        <a href="#" class="sidebar-link" onclick="showSection('fair')">🎪 竹商園遊會</a>
+        <a href="#" class="sidebar-link" onclick="showSection('classic')">Classic Cipher</a>
+        <a href="#" class="sidebar-link" onclick="showSection('modern')">Modern Cipher</a>
+        <a href="#" class="sidebar-link" onclick="showSection('game')">Dino</a>
+        <a href="#" class="sidebar-link" onclick="showSection('fair')">竹商園遊會</a>
     </nav>
 
     <div id="main-content" class="container">
         <textarea id="input" rows="4" placeholder="在此輸入..."></textarea>
         <div id="section-classic">
-            <h2>古密碼</h2>
+            <h2>Classic Cipher</h2>
             <div class="btn-grid"><button class="tool-btn" onclick="runCaesar()">Caesar</button><button class="tool-btn" onclick="runAtbash()">Atbash</button></div>
         </div>
         <div id="section-modern">
-            <h2>現代密碼</h2>
+            <h2>Modern Cipher</h2>
             <div class="btn-grid">
                 <button class="tool-btn" onclick="runASCII()">ASCII</button>
                 <button class="tool-btn" onclick="runBase64()">Base64</button>
@@ -148,9 +148,9 @@
     </div>
 
     <div id="game-page" class="container" style="display:none; text-align:center;">
-        <h2>🦖 Dino Game (按空白鍵跳躍)</h2>
+        <h2>Dino Game (Press Space)</h2>
         <canvas id="gameCanvas" width="600" height="200"></canvas>
-        <button class="tool-btn" style="margin-top:20px;" onclick="startGame()">開始遊戲 / 重來</button>
+        <button class="tool-btn" style="margin-top:20px;" onclick="startGame()">Start / Restart</button>
     </div>
 
     <div id="fair-content" class="container" style="display:none;">
