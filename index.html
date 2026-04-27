@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cipher Tool - 承蔚老帥了</title>
+    <title>Cipher Tool - Pro</title>
     <style>
         :root {
             --bg-color: #0a0a0a;
@@ -30,7 +30,6 @@
             overflow-x: hidden;
         }
 
-        /* 炫光標題動畫 */
         .neon-text {
             text-shadow: var(--neon-glow);
             animation: flicker 2s infinite alternate;
@@ -46,11 +45,12 @@
             box-shadow: 0 5px 15px -5px var(--border-color);
         }
 
+        .nav-controls { display: flex; gap: 10px; }
         .icon-btn { 
             background: none; border: 1px solid var(--border-color); 
-            color: var(--text-color); font-size: 1.5rem; 
-            padding: 8px 12px; cursor: pointer; border-radius: 8px;
-            box-shadow: var(--neon-glow);
+            color: var(--text-color); font-size: 1.2rem; 
+            padding: 8px 15px; cursor: pointer; border-radius: 8px;
+            font-weight: bold;
         }
 
         .container { max-width: 800px; margin: auto; animation: slideUp 0.6s ease; }
@@ -60,7 +60,7 @@
             width: 100%; background: var(--box-bg); 
             color: inherit; border: 2px solid var(--border-color); 
             padding: 15px; font-size: 1.4rem; border-radius: 10px;
-            margin-top: 20px; outline: none; box-shadow: inset 0 0 10px rgba(0,255,0,0.1);
+            margin-top: 20px; outline: none;
         }
 
         .btn-grid { 
@@ -72,7 +72,7 @@
             background: var(--btn-bg); color: var(--text-color); 
             border: 2px solid var(--border-color); padding: 15px; 
             font-size: 1.2rem; font-weight: bold; cursor: pointer;
-            border-radius: 12px; position: relative; overflow: hidden;
+            border-radius: 12px;
         }
         button.tool-btn:hover { 
             background: var(--text-color); color: var(--bg-color); 
@@ -85,12 +85,13 @@
             padding: 20px; border: 2px solid var(--border-color);
             font-size: 1.2rem; border-radius: 10px; box-shadow: var(--neon-glow);
         }
+        .light-mode .result-box { background: #f0f0f0; color: #800080; }
 
-        /* 側邊選單 */
+        /* Sidebar */
         .sidebar {
             position: fixed; top: 0; right: -300px; width: 300px; height: 100%;
             background: var(--box-bg); border-left: 3px solid var(--border-color);
-            z-index: 1000; padding: 60px 20px; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000; padding: 60px 20px; transition: 0.5s ease;
         }
         .sidebar.active { right: 0; box-shadow: -10px 0 30px rgba(0,0,0,0.8); }
         .sidebar-link {
@@ -100,13 +101,16 @@
         }
         .sidebar-link:hover { border-color: var(--border-color); box-shadow: var(--neon-glow); }
 
-        /* 園遊會 & GIF */
+        /* Fair Content */
         .fair-container { text-align: center; padding: 20px; }
         .gif-box { margin: 20px auto; max-width: 100%; border: 3px solid var(--border-color); border-radius: 10px; box-shadow: var(--neon-glow); }
         
-        /* 小恐龍遊戲容器 */
-        #game-container { display: none; text-align: center; margin-top: 20px; }
-        canvas { background: #eee; border: 2px solid var(--border-color); border-radius: 10px; display: block; margin: auto; }
+        .ig-link {
+            display: inline-block; margin-top: 20px; padding: 15px 30px;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white; text-decoration: none; border-radius: 50px;
+            font-size: 1.5rem; font-weight: bold;
+        }
 
         .footer { font-size: 2.8rem; font-weight: 900; text-align: center; margin-top: 40px; text-shadow: var(--neon-glow); }
     </style>
@@ -116,49 +120,48 @@
     <header>
         <h1 id="header-title" class="neon-text">Cipher Tool</h1>
         <div class="nav-controls">
-            <button class="icon-btn" onclick="toggleTheme()">🌓</button>
-            <button class="icon-btn" onclick="toggleSidebar()">☰</button>
+            <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+            <button class="icon-btn" onclick="toggleSidebar()">Menu</button>
         </div>
     </header>
 
     <nav class="sidebar" id="sidebar">
-        <button class="icon-btn" style="position:absolute; top:15px; left:15px;" onclick="toggleSidebar()">✕</button>
-        <a href="#" class="sidebar-link" onclick="showSection('classic')">Classic Cipher</a>
-        <a href="#" class="sidebar-link" onclick="showSection('modern')">Modern Cipher</a>
-        <a href="#" class="sidebar-link" onclick="showSection('game')">Dino</a>
+        <button class="icon-btn" style="position:absolute; top:15px; left:15px;" onclick="toggleSidebar()">Close</button>
+        <a href="#" class="sidebar-link" onclick="showSection('classic')">Classical Ciphers</a>
+        <a href="#" class="sidebar-link" onclick="showSection('modern')">Modern Ciphers</a>
         <a href="#" class="sidebar-link" onclick="showSection('fair')">竹商園遊會</a>
     </nav>
 
     <div id="main-content" class="container">
-        <textarea id="input" rows="4" placeholder="在此輸入..."></textarea>
+        <textarea id="input" rows="4" placeholder="Input text here..."></textarea>
+        
         <div id="section-classic">
-            <h2>Classic Cipher</h2>
-            <div class="btn-grid"><button class="tool-btn" onclick="runCaesar()">Caesar</button><button class="tool-btn" onclick="runAtbash()">Atbash</button></div>
+            <h2>Classical</h2>
+            <div class="btn-grid">
+                <button class="tool-btn" onclick="runCaesar()">Caesar</button>
+                <button class="tool-btn" onclick="runAtbash()">Atbash</button>
+            </div>
         </div>
+
         <div id="section-modern">
-            <h2>Modern Cipher</h2>
+            <h2>Modern</h2>
             <div class="btn-grid">
                 <button class="tool-btn" onclick="runASCII()">ASCII</button>
                 <button class="tool-btn" onclick="runBase64()">Base64</button>
                 <button class="tool-btn" onclick="runHex()">Hex</button>
             </div>
         </div>
+
         <div id="output" class="result-box">Loading...</div>
         <div class="footer neon-text">承蔚老帥了</div>
     </div>
 
-    <div id="game-page" class="container" style="display:none; text-align:center;">
-        <h2>Dino Game (Press Space)</h2>
-        <canvas id="gameCanvas" width="600" height="200"></canvas>
-        <button class="tool-btn" style="margin-top:20px;" onclick="startGame()">Start / Restart</button>
-    </div>
-
     <div id="fair-content" class="container" style="display:none;">
         <div class="fair-container">
-            <div class="footer neon-text" style="font-size:3rem;">5/9 綜二1 ⭐️⭐️⭐️</div>
-            <img src="67.gif" alt="需要上傳67.gif到GitHub" class="gif-box" onerror="this.src='https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueXp3Ymt4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4Z3R4JnB0PW0mZnJlZT1mJmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKMGpxxpfL6SFWo/giphy.gif'">
+            <div class="footer neon-text" style="font-size:3rem; margin-bottom:20px;">5/9 記得要來<br>綜二1 喔喔</div>
+            <img src="67.gif" alt="67.gif" class="gif-box" onerror="this.style.display='none'">
             <br>
-            <a href="https://www.instagram.com/hccvs_da21?igsh=MWdmNHp6aTdkbTAxaQ==" target="_blank" class="ig-link" style="color:#fff; background:linear-gradient(45deg,#f09433,#bc1888); padding:15px 30px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:1.5rem; display:inline-block; margin-top:20px;">快來看看吧</a>
+            <a href="https://www.instagram.com/hccvs_da21?igsh=MWdmNHp6aTdkbTAxaQ==" target="_blank" class="ig-link">快來看看吧</a>
             <div class="footer neon-text" style="margin-top:60px;">承蔚老帥了</div>
         </div>
     </div>
@@ -169,66 +172,18 @@
 
         function showSection(type) {
             toggleSidebar();
-            const sections = ['main-content', 'game-page', 'fair-content'];
-            sections.forEach(s => document.getElementById(s).style.display = 'none');
+            document.getElementById('main-content').style.display = (type === 'fair') ? 'none' : 'block';
+            document.getElementById('fair-content').style.display = (type === 'fair') ? 'block' : 'none';
             
-            if (type === 'classic' || type === 'modern') {
-                document.getElementById('main-content').style.display = 'block';
+            if (type !== 'fair') {
                 document.getElementById('section-classic').style.display = (type === 'classic') ? 'block' : 'none';
                 document.getElementById('section-modern').style.display = (type === 'modern') ? 'block' : 'none';
                 document.getElementById('header-title').innerText = 'Cipher Tool';
-            } else if (type === 'game') {
-                document.getElementById('game-page').style.display = 'block';
-                document.getElementById('header-title').innerText = 'Dino Game';
             } else {
-                document.getElementById('fair-content').style.display = 'block';
                 document.getElementById('header-title').innerText = '竹商園遊會';
             }
         }
 
-        // --- 小恐龍遊戲簡單實作 ---
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        let dino = { x: 50, y: 150, w: 40, h: 40, dy: 0, jump: -12, ground: 150, isGrounded: true };
-        let obstacles = [];
-        let score = 0;
-        let gameActive = false;
-
-        function startGame() {
-            gameActive = true; score = 0; obstacles = []; dino.y = 150; dino.dy = 0;
-            requestAnimationFrame(updateGame);
-        }
-
-        window.addEventListener('keydown', (e) => { if (e.code === 'Space' && dino.isGrounded) { dino.dy = dino.jump; dino.isGrounded = false; } });
-
-        function updateGame() {
-            if (!gameActive) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Dino
-            dino.dy += 0.6; // Gravity
-            dino.y += dino.dy;
-            if (dino.y > dino.ground) { dino.y = dino.ground; dino.dy = 0; dino.isGrounded = true; }
-            ctx.fillStyle = '#555'; ctx.fillRect(dino.x, dino.y, dino.w, dino.h);
-
-            // Obstacles
-            if (Math.random() < 0.02) obstacles.push({ x: canvas.width, y: 160, w: 20, h: 30 });
-            obstacles.forEach((ob, i) => {
-                ob.x -= 6;
-                ctx.fillStyle = 'red'; ctx.fillRect(ob.x, ob.y, ob.w, ob.h);
-                if (ob.x < -20) obstacles.splice(i, 1);
-                // Collision
-                if (dino.x < ob.x + ob.w && dino.x + dino.w > ob.x && dino.y < ob.y + ob.h && dino.y + dino.h > ob.y) {
-                    gameActive = false; alert("Game Over! Score: " + score);
-                }
-            });
-
-            score++;
-            ctx.fillStyle = '#000'; ctx.fillText("Score: " + score, 10, 20);
-            requestAnimationFrame(updateGame);
-        }
-
-        // --- 密碼邏輯 (同前版) ---
         function runCaesar() {
             let s = document.getElementById('input').value;
             let res = "Caesar Brute Force:\n";
@@ -240,29 +195,35 @@
             }
             document.getElementById('output').innerText = res;
         }
+
         function runAtbash() {
             let s = document.getElementById('input').value;
             document.getElementById('output').innerText = "Atbash Result:\n" + s.replace(/[a-zA-Z]/g, c => {
-                const b = c <= 'Z' ? 65 + 90 : 97 + 122; return String.fromCharCode(b - c.charCodeAt(0));
+                const b = c <= 'Z' ? 65 + 90 : 97 + 122;
+                return String.fromCharCode(b - c.charCodeAt(0));
             });
         }
+
         function runASCII() {
             let s = document.getElementById('input').value.trim();
             try {
                 let res = s.split(/\s+/).map(n => String.fromCharCode(parseInt(n))).join('');
                 document.getElementById('output').innerText = "ASCII Result:\n" + res;
-            } catch(e) { document.getElementById('output').innerText = "錯誤：請輸入十進位數字"; }
+            } catch(e) { document.getElementById('output').innerText = "Error: Use decimal numbers (e.g., 75 65)."; }
         }
+
         function runBase64() {
-            try { document.getElementById('output').innerText = "Base64 Decode:\n" + atob(document.getElementById('input').value); }
-            catch(e) { document.getElementById('output').innerText = "無效的 Base64"; }
+            try { document.getElementById('output').innerText = "Base64 Result:\n" + atob(document.getElementById('input').value.trim()); }
+            catch(e) { document.getElementById('output').innerText = "Error: Invalid Base64 string."; }
         }
+
         function runHex() {
             let s = document.getElementById('input').value.replace(/\s+/g, '');
             try {
-                let res = ""; for (let i = 0; i < s.length; i += 2) res += String.fromCharCode(parseInt(s.substr(i, 2), 16));
-                document.getElementById('output').innerText = "Hex Decode:\n" + res;
-            } catch(e) { document.getElementById('output').innerText = "無效的 Hex"; }
+                let res = "";
+                for (let i = 0; i < s.length; i += 2) res += String.fromCharCode(parseInt(s.substr(i, 2), 16));
+                document.getElementById('output').innerText = "Hex Result:\n" + res;
+            } catch(e) { document.getElementById('output').innerText = "Error: Invalid Hex string."; }
         }
     </script>
 </body>
