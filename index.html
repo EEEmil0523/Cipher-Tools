@@ -35,13 +35,13 @@
             width: 100%; height: 100%;
         }
 
-        /* ===== 頂部固定眼睛區 (層級拉到最高) ===== */
+        /* ===== 頂部固定眼睛區 ===== */
         #eye-header {
             position: fixed; top: 0; left: 0; width: 100%;
             height: 220px; background: var(--bg-color);
             display: flex; justify-content: space-between; align-items: flex-start;
             padding: 15px 20px; 
-            z-index: 12000; /* 確保永遠在選單上方 */
+            z-index: 12000; 
             border-bottom: 2px solid var(--border-color);
             transition: height 0.5s ease;
         }
@@ -102,7 +102,7 @@
             92%, 95% { transform: scaleY(1); }
         }
 
-        /* ===== UI 與排版 ===== */
+        /* ===== UI 與按鈕 ===== */
         .icon-btn { 
             background: var(--bg-color); border: 2px solid var(--border-color); 
             color: var(--text-color); font-size: 1.5rem; 
@@ -118,7 +118,7 @@
         }
 
         .enter-hint {
-            margin-top: 250px; font-size: 2rem; font-weight: bold;
+            margin-top: 150px; font-size: 2rem; font-weight: bold;
             text-transform: uppercase; letter-spacing: 5px;
             animation: pulse 2s infinite;
         }
@@ -150,7 +150,7 @@
             font-size: 1.3rem; border-radius: 10px; box-shadow: var(--neon-glow);
         }
 
-        /* ===== 側邊選單 (現在躲在眼睛下面) ===== */
+        /* ===== 側邊選單 ===== */
         .sidebar {
             position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
             background: var(--bg-color); z-index: 11000; 
@@ -163,40 +163,32 @@
             font-size: 2.5rem; margin: 30px 0; font-weight: 900; text-align: center;
         }
 
-        .footer { font-size: 3rem; font-weight: 900; text-align: center; margin-top: 50px; text-shadow: var(--neon-glow); }
+        /* ===== 頁尾多行文字樣式 ===== */
+        .footer-group { margin-top: 40px; text-align: center; }
+        .footer { 
+            font-size: 2.2rem; font-weight: 900; line-height: 1.3;
+            text-shadow: var(--neon-glow); margin: 5px 0;
+        }
         .neon-text { text-shadow: var(--neon-glow); }
 
-        /* ===== 電腦版專屬放大設定 (魄力提升版) ===== */
+        /* ===== 電腦版專屬放大設定 ===== */
         @media (min-width: 768px) {
             #eye-header { padding: 25px 40px; }
             .icon-btn { font-size: 1.8rem; padding: 15px 35px; min-width: 140px; }
-            
-            /* 解密區塊放大 */
             .container { max-width: 1200px; }
             textarea { font-size: 2.5rem; padding: 30px; min-height: 250px; border-width: 5px; }
             button.tool-btn { font-size: 2rem; padding: 25px; border-width: 4px; border-radius: 20px; }
             .btn-grid { gap: 30px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
             .result-box { font-size: 2.2rem; padding: 40px; min-height: 150px; border-width: 4px; }
-            
             .sidebar-link { font-size: 4rem; margin: 50px 0; }
             .sidebar { padding-top: 220px; }
-
-            /* 園遊會版面：突破容器佔最大 */
-            #fair-content { 
-                max-width: 100% !important; 
-                width: 95%; 
-            }
+            
+            #fair-content { max-width: 100% !important; width: 95%; }
             .fair-title { font-size: 6rem !important; margin-bottom: 40px; }
-            .fair-img { 
-                max-width: 900px !important; 
-                width: 100%; 
-                border-width: 8px !important; 
-            }
-            .fair-btn { 
-                font-size: 3rem !important; 
-                padding: 30px 80px !important; 
-                margin-top: 50px !important; 
-            }
+            .fair-img { max-width: 900px !important; width: 100%; border-width: 8px !important; }
+            .fair-btn { font-size: 3rem !important; padding: 30px 80px !important; margin-top: 50px !important; }
+            
+            .footer { font-size: 3.5rem; }
         }
     </style>
 </head>
@@ -204,19 +196,20 @@
 
     <div id="eye-header">
         <button class="icon-btn" onclick="toggleTheme()">🌓</button>
-        
         <div class="eyes-container" onclick="toggleEyeSize()" title="點擊切換大小">
             <div class="eye"><div class="pupil"></div><div class="eyelid"></div></div>
             <div class="eye"><div class="pupil"></div><div class="eyelid"></div></div>
         </div>
-
         <button class="icon-btn" id="menu-btn" onclick="toggleSidebar()">MENU</button>
     </div>
 
     <div id="landing-overlay" onclick="requestAndEnter()">
         <div class="enter-hint neon-text">Click to Enter</div>
-        <div class="footer neon-text">承蔚老帥了
-        東錦老奶了</div>
+        <div class="footer-group">
+            <div class="footer neon-text">承蔚老帥了</div>
+            <div class="footer neon-text">東錦老奶了</div>
+            <div class="footer neon-text">晉安老奶了</div>
+        </div>
     </div>
 
     <div id="main-app">
@@ -224,7 +217,11 @@
             <a href="#" class="sidebar-link" onclick="showSection('classic')">Classical</a>
             <a href="#" class="sidebar-link" onclick="showSection('modern')">Modern</a>
             <a href="#" class="sidebar-link" onclick="showSection('fair')">竹商園遊會</a>
-            <div class="footer neon-text" style="margin-top:auto; padding-bottom: 50px;">承蔚老帥了</div>
+            <div class="footer-group" style="margin-top:auto; padding-bottom: 50px;">
+                <div class="footer neon-text">承蔚老帥了</div>
+                <div class="footer neon-text">東錦老奶了</div>
+                <div class="footer neon-text">晉安老奶了</div>
+            </div>
         </nav>
 
         <div id="main-content" class="container">
@@ -244,19 +241,24 @@
                 </div>
             </div>
             <div id="output" class="result-box">Waiting...</div>
-            <div class="footer neon-text">承蔚老帥了</div>
+            <div class="footer-group">
+                <div class="footer neon-text">承蔚老帥了</div>
+                <div class="footer neon-text">東錦老奶了</div>
+                <div class="footer neon-text">晉安老奶了</div>
+            </div>
         </div>
 
         <div id="fair-content" class="container" style="display:none;">
             <div style="text-align:center;">
                 <div class="footer neon-text fair-title" style="font-size:3.5rem;">5/9 記得要來<br>綜二1 喔喔</div>
-                
                 <img src="67.gif" alt="67.gif" class="fair-img" style="max-width:100%; border-radius:25px; border:4px solid var(--border-color); margin-top:20px;" onerror="this.style.display='none'">
                 <br>
-                
                 <a href="https://www.instagram.com/hccvs_da21?igsh=MWdmNHp6aTdkbTAxaQ==" target="_blank" class="fair-btn" style="display:inline-block; margin-top:30px; padding:20px 40px; background:linear-gradient(45deg,#f09433,#bc1888); color:white; text-decoration:none; border-radius:50px; font-size:1.8rem; font-weight:bold;">快來看看吧</a>
-                
-                <div class="footer neon-text" style="margin-top:80px;">承蔚老帥了</div>
+                <div class="footer-group" style="margin-top:80px;">
+                    <div class="footer neon-text">承蔚老帥了</div>
+                    <div class="footer neon-text">東錦老奶了</div>
+                    <div class="footer neon-text">晉安老奶了</div>
+                </div>
             </div>
         </div>
     </div>
@@ -272,7 +274,6 @@
             } else {
                 window.addEventListener('deviceorientation', handleGyro);
             }
-
             document.getElementById('eye-header').classList.add('compact');
             document.getElementById('landing-overlay').style.opacity = '0';
             setTimeout(() => {
@@ -292,10 +293,7 @@
                 const pupilRect = pupil.getBoundingClientRect();
                 const maxRadius = (eyeRect.width / 2) - (pupilRect.width / 2) - 4; 
                 const distance = Math.hypot(xOffset, yOffset);
-                
-                let finalX = xOffset;
-                let finalY = yOffset;
-
+                let finalX = xOffset, finalY = yOffset;
                 if (distance > maxRadius) {
                     const ratio = maxRadius / distance;
                     finalX = xOffset * ratio;
@@ -322,18 +320,11 @@
         }
 
         function toggleTheme() { document.body.classList.toggle('light-mode'); }
-        
-        // 切換側邊選單，並自動更改按鈕文字
         function toggleSidebar() { 
             const sidebar = document.getElementById('sidebar');
             const menuBtn = document.getElementById('menu-btn');
             sidebar.classList.toggle('active'); 
-            
-            if(sidebar.classList.contains('active')) {
-                menuBtn.innerText = "CLOSE";
-            } else {
-                menuBtn.innerText = "MENU";
-            }
+            menuBtn.innerText = sidebar.classList.contains('active') ? "CLOSE" : "MENU";
         }
 
         function showSection(type) {
