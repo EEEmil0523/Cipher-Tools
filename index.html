@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cipher Tool - Pro</title>
     <style>
         :root {
@@ -23,11 +23,37 @@
             --neon-glow: 0 0 10px #800080, 0 0 20px #800080;
         }
 
-        * { box-sizing: border-box; transition: 0.3s; }
+        /* 禁用縮放與雙擊放大 */
+        * { 
+            box-sizing: border-box; 
+            transition: background 0.3s, color 0.3s; 
+            touch-action: manipulation; 
+        }
+
         body { 
             background: var(--bg-color); color: var(--text-color); 
             font-family: 'Segoe UI', monospace; margin: 0; padding: 20px;
             overflow-x: hidden;
+        }
+
+        /* 靈動大眼睛區域 */
+        .eyes-wrapper {
+            display: flex; justify-content: center; gap: 25px;
+            padding: 20px 0; margin-top: 10px;
+        }
+        .eye {
+            width: 70px; height: 70px; background: #fff;
+            border-radius: 50%; position: relative;
+            border: 3px solid var(--border-color);
+            box-shadow: var(--neon-glow);
+            overflow: hidden;
+        }
+        .pupil {
+            width: 30px; height: 30px; background: #000;
+            border-radius: 50%; position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            transition: 0.1s linear; /* 讓移動更順滑 */
         }
 
         .neon-text {
@@ -35,26 +61,23 @@
             animation: flicker 2s infinite alternate;
         }
         @keyframes flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: var(--neon-glow); }
-            20%, 22%, 24%, 55% { text-shadow: none; }
+            0%, 100% { text-shadow: var(--neon-glow); }
+            50% { text-shadow: 0 0 5px var(--border-color); }
         }
 
         header {
             display: flex; justify-content: space-between; align-items: center;
             padding-bottom: 15px; border-bottom: 2px solid var(--border-color);
-            box-shadow: 0 5px 15px -5px var(--border-color);
         }
 
-        .nav-controls { display: flex; gap: 10px; }
         .icon-btn { 
             background: none; border: 1px solid var(--border-color); 
             color: var(--text-color); font-size: 1.2rem; 
-            padding: 8px 15px; cursor: pointer; border-radius: 8px;
-            font-weight: bold;
+            padding: 8px 15px; cursor: pointer; border-radius: 8px; font-weight: bold;
         }
 
         .container { max-width: 800px; margin: auto; animation: slideUp 0.6s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         textarea { 
             width: 100%; background: var(--box-bg); 
@@ -64,20 +87,16 @@
         }
 
         .btn-grid { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); 
             gap: 15px; margin-top: 20px; 
         }
 
         button.tool-btn { 
             background: var(--btn-bg); color: var(--text-color); 
             border: 2px solid var(--border-color); padding: 15px; 
-            font-size: 1.2rem; font-weight: bold; cursor: pointer;
-            border-radius: 12px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer; border-radius: 12px;
         }
-        button.tool-btn:hover { 
-            background: var(--text-color); color: var(--bg-color); 
-            box-shadow: var(--neon-glow); transform: scale(1.05);
-        }
+        button.tool-btn:hover { background: var(--text-color); color: var(--bg-color); box-shadow: var(--neon-glow); }
 
         .result-box { 
             margin-top: 25px; white-space: pre-wrap; 
@@ -87,32 +106,25 @@
         }
         .light-mode .result-box { background: #f0f0f0; color: #800080; }
 
-        /* Sidebar */
         .sidebar {
             position: fixed; top: 0; right: -300px; width: 300px; height: 100%;
             background: var(--box-bg); border-left: 3px solid var(--border-color);
             z-index: 1000; padding: 60px 20px; transition: 0.5s ease;
         }
-        .sidebar.active { right: 0; box-shadow: -10px 0 30px rgba(0,0,0,0.8); }
+        .sidebar.active { right: 0; }
         .sidebar-link {
             display: block; color: var(--text-color); text-decoration: none;
             font-size: 1.3rem; margin: 20px 0; font-weight: bold; padding: 10px;
-            border: 1px solid transparent; border-radius: 5px;
         }
-        .sidebar-link:hover { border-color: var(--border-color); box-shadow: var(--neon-glow); }
 
-        /* Fair Content */
         .fair-container { text-align: center; padding: 20px; }
-        .gif-box { margin: 20px auto; max-width: 100%; border: 3px solid var(--border-color); border-radius: 10px; box-shadow: var(--neon-glow); }
-        
         .ig-link {
             display: inline-block; margin-top: 20px; padding: 15px 30px;
-            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-            color: white; text-decoration: none; border-radius: 50px;
-            font-size: 1.5rem; font-weight: bold;
+            background: linear-gradient(45deg, #f09433, #bc1888);
+            color: white; text-decoration: none; border-radius: 50px; font-weight: bold;
         }
 
-        .footer { font-size: 2.8rem; font-weight: 900; text-align: center; margin-top: 40px; text-shadow: var(--neon-glow); }
+        .footer { font-size: 2.5rem; font-weight: 900; text-align: center; margin-top: 40px; text-shadow: var(--neon-glow); }
     </style>
 </head>
 <body>
@@ -120,10 +132,15 @@
     <header>
         <h1 id="header-title" class="neon-text">Cipher Tool</h1>
         <div class="nav-controls">
-            <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+            <button class="icon-btn" onclick="toggleTheme()">🌓</button>
             <button class="icon-btn" onclick="toggleSidebar()">Menu</button>
         </div>
     </header>
+
+    <div class="eyes-wrapper">
+        <div class="eye"><div class="pupil"></div></div>
+        <div class="eye"><div class="pupil"></div></div>
+    </div>
 
     <nav class="sidebar" id="sidebar">
         <button class="icon-btn" style="position:absolute; top:15px; left:15px;" onclick="toggleSidebar()">Close</button>
@@ -143,23 +160,24 @@
             </div>
         </div>
 
-        <div id="section-modern">
+        <div id="section-modern" style="display:none;">
             <h2>Modern</h2>
             <div class="btn-grid">
                 <button class="tool-btn" onclick="runASCII()">ASCII</button>
                 <button class="tool-btn" onclick="runBase64()">Base64</button>
                 <button class="tool-btn" onclick="runHex()">Hex</button>
+                <button class="tool-btn" onclick="runBinary()">Binary</button>
             </div>
         </div>
 
-        <div id="output" class="result-box">Loading...</div>
+        <div id="output" class="result-box">Waiting for command...</div>
         <div class="footer neon-text">承蔚老帥了</div>
     </div>
 
     <div id="fair-content" class="container" style="display:none;">
         <div class="fair-container">
             <div class="footer neon-text" style="font-size:3rem; margin-bottom:20px;">5/9 記得要來<br>綜二1 喔喔</div>
-            <img src="67.gif" alt="67.gif" class="gif-box" onerror="this.style.display='none'">
+            <img src="67.gif" alt="67.gif" style="max-width:100%; border-radius:10px; border:2px solid var(--border-color); box-shadow:var(--neon-glow);" onerror="this.style.display='none'">
             <br>
             <a href="https://www.instagram.com/hccvs_da21?igsh=MWdmNHp6aTdkbTAxaQ==" target="_blank" class="ig-link">快來看看吧</a>
             <div class="footer neon-text" style="margin-top:60px;">承蔚老帥了</div>
@@ -174,7 +192,6 @@
             toggleSidebar();
             document.getElementById('main-content').style.display = (type === 'fair') ? 'none' : 'block';
             document.getElementById('fair-content').style.display = (type === 'fair') ? 'block' : 'none';
-            
             if (type !== 'fair') {
                 document.getElementById('section-classic').style.display = (type === 'classic') ? 'block' : 'none';
                 document.getElementById('section-modern').style.display = (type === 'modern') ? 'block' : 'none';
@@ -184,6 +201,33 @@
             }
         }
 
+        // --- 眼睛移動邏輯 ---
+        const pupils = document.querySelectorAll('.pupil');
+        
+        // 電腦版：隨鼠標移動
+        window.addEventListener('mousemove', (e) => {
+            pupils.forEach(pupil => {
+                const rect = pupil.parentElement.getBoundingClientRect();
+                const eyeX = rect.left + rect.width / 2;
+                const eyeY = rect.top + rect.height / 2;
+                const angle = Math.atan2(e.clientY - eyeY, e.clientX - eyeX);
+                const distance = Math.min(rect.width / 4, Math.hypot(e.clientX - eyeX, e.clientY - eyeY) / 10);
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                pupil.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+            });
+        });
+
+        // 手機版：隨陀螺儀移動
+        window.addEventListener('deviceorientation', (e) => {
+            const xOffset = Math.min(Math.max(e.gamma / 3, -15), 15); // 左右傾斜
+            const yOffset = Math.min(Math.max((e.beta - 45) / 3, -15), 15); // 前後傾斜
+            pupils.forEach(pupil => {
+                pupil.style.transform = `translate(calc(-50% + ${xOffset}px), calc(-50% + ${yOffset}px))`;
+            });
+        });
+
+        // --- 密碼工具邏輯 ---
         function runCaesar() {
             let s = document.getElementById('input').value;
             let res = "Caesar Brute Force:\n";
@@ -199,8 +243,7 @@
         function runAtbash() {
             let s = document.getElementById('input').value;
             document.getElementById('output').innerText = "Atbash Result:\n" + s.replace(/[a-zA-Z]/g, c => {
-                const b = c <= 'Z' ? 65 + 90 : 97 + 122;
-                return String.fromCharCode(b - c.charCodeAt(0));
+                const b = c <= 'Z' ? 65 + 90 : 97 + 122; return String.fromCharCode(b - c.charCodeAt(0));
             });
         }
 
@@ -209,21 +252,28 @@
             try {
                 let res = s.split(/\s+/).map(n => String.fromCharCode(parseInt(n))).join('');
                 document.getElementById('output').innerText = "ASCII Result:\n" + res;
-            } catch(e) { document.getElementById('output').innerText = "Error: Use decimal numbers (e.g., 75 65)."; }
+            } catch(e) { document.getElementById('output').innerText = "Error: Use decimal numbers."; }
         }
 
         function runBase64() {
             try { document.getElementById('output').innerText = "Base64 Result:\n" + atob(document.getElementById('input').value.trim()); }
-            catch(e) { document.getElementById('output').innerText = "Error: Invalid Base64 string."; }
+            catch(e) { document.getElementById('output').innerText = "Error: Invalid Base64."; }
         }
 
         function runHex() {
             let s = document.getElementById('input').value.replace(/\s+/g, '');
             try {
-                let res = "";
-                for (let i = 0; i < s.length; i += 2) res += String.fromCharCode(parseInt(s.substr(i, 2), 16));
+                let res = ""; for (let i = 0; i < s.length; i += 2) res += String.fromCharCode(parseInt(s.substr(i, 2), 16));
                 document.getElementById('output').innerText = "Hex Result:\n" + res;
-            } catch(e) { document.getElementById('output').innerText = "Error: Invalid Hex string."; }
+            } catch(e) { document.getElementById('output').innerText = "Error: Invalid Hex."; }
+        }
+
+        function runBinary() {
+            let s = document.getElementById('input').value.trim();
+            try {
+                let res = s.split(/\s+/).map(b => String.fromCharCode(parseInt(b, 2))).join('');
+                document.getElementById('output').innerText = "Binary Result:\n" + res;
+            } catch(e) { document.getElementById('output').innerText = "Error: Use binary (e.g. 01001011)."; }
         }
     </script>
 </body>
