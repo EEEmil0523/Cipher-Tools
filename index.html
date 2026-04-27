@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cipher Tool - Pro</title>
+    <title>Cipher Tool - Eternal Eyes</title>
     <style>
         :root {
             --bg-color: #0a0a0a;
@@ -11,7 +11,7 @@
             --box-bg: #111;
             --btn-bg: #222;
             --border-color: #00ff00;
-            --neon-glow: 0 0 15px #00ff00, 0 0 30px #00ff00;
+            --neon-glow: 0 0 20px #00ff00, 0 0 40px #00ff00;
         }
 
         .light-mode {
@@ -20,7 +20,7 @@
             --box-bg: #f9f9f9;
             --btn-bg: #ffffff;
             --border-color: #800080;
-            --neon-glow: 0 0 15px #800080, 0 0 30px #800080;
+            --neon-glow: 0 0 20px #800080, 0 0 40px #800080;
         }
 
         * { 
@@ -35,60 +35,72 @@
             overflow-x: hidden; width: 100%; height: 100%;
         }
 
-        /* 登陸頁面 (Landing Page) */
-        #landing-page {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color); z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer; transition: opacity 0.8s ease, visibility 0.8s;
+        /* 眼睛容器 - 負責在螢幕上定位 */
+        #eye-system {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10000;
+            display: flex; gap: 30px;
+            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            pointer-events: none; /* 讓點擊穿透到背景 */
         }
 
-        /* 靈動大眼睛 - 加大瞳孔 */
-        .eyes-container { display: flex; gap: 40px; }
+        /* 進入後的眼睛縮放位置 */
+        #eye-system.active {
+            top: 100px; /* 移動到頂部 */
+            transform: translate(-50%, 0) scale(0.6); /* 縮小一點以免擋到工具 */
+        }
+
         .eye {
-            width: 120px; height: 120px; background: #fff;
+            width: 220px; height: 220px; background: #fff;
             border-radius: 50%; position: relative;
-            border: 4px solid var(--border-color);
+            border: 8px solid var(--border-color);
             box-shadow: var(--neon-glow); overflow: hidden;
         }
         .pupil {
-            width: 65px; height: 65px; background: #000;
+            width: 130px; height: 130px; background: #000;
             border-radius: 50%; position: absolute;
             left: 50%; top: 50%;
             transform: translate(-50%, -50%);
-            /* 平滑滑動感核心 */
-            transition: transform 0.15s cubic-bezier(0.2, 0.5, 0.1, 1);
+            transition: transform 0.15s cubic-bezier(0.1, 0.5, 0.1, 1);
+        }
+
+        /* 登陸頁面文字 */
+        #landing-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            align-items: center; padding-bottom: 100px;
+            cursor: pointer; transition: opacity 0.8s ease;
         }
 
         .enter-hint {
-            margin-top: 40px; font-size: 1.2rem; 
-            text-transform: uppercase; letter-spacing: 3px;
-            animation: pulse 1.5s infinite;
+            font-size: 1.5rem; font-weight: bold;
+            text-transform: uppercase; letter-spacing: 5px;
+            animation: pulse 2s infinite;
         }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 
         /* 主程式內容 */
-        #main-app { display: none; padding: 20px; }
+        #main-app { 
+            display: none; opacity: 0; 
+            padding: 200px 20px 40px 20px; /* 留位置給縮小的眼睛 */
+            transition: opacity 1s ease;
+        }
 
         header {
             display: flex; justify-content: space-between; align-items: center;
             padding-bottom: 15px; border-bottom: 2px solid var(--border-color);
+            margin-bottom: 20px;
         }
 
-        .icon-btn { 
-            background: none; border: 1px solid var(--border-color); 
-            color: var(--text-color); font-size: 1.2rem; 
-            padding: 8px 15px; cursor: pointer; border-radius: 8px; font-weight: bold;
-        }
-
-        .container { max-width: 800px; margin: auto; animation: slideUp 0.6s ease; padding-top: 20px; }
+        .container { max-width: 800px; margin: auto; animation: slideUp 0.6s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
         textarea { 
             width: 100%; background: var(--box-bg); 
             color: inherit; border: 2px solid var(--border-color); 
-            padding: 15px; font-size: 1.4rem; border-radius: 10px;
-            margin-top: 20px; outline: none;
+            padding: 15px; font-size: 1.4rem; border-radius: 10px; outline: none;
         }
 
         .btn-grid { 
@@ -104,65 +116,53 @@
         button.tool-btn:hover { background: var(--text-color); color: var(--bg-color); box-shadow: var(--neon-glow); }
 
         .result-box { 
-            margin-top: 25px; white-space: pre-wrap; 
-            background: #000; color: #00ff00;
+            margin-top: 25px; white-space: pre-wrap; background: #000; color: #00ff00;
             padding: 20px; border: 2px solid var(--border-color);
             font-size: 1.2rem; border-radius: 10px; box-shadow: var(--neon-glow);
         }
-        .light-mode .result-box { background: #f0f0f0; color: #800080; }
 
         .sidebar {
             position: fixed; top: 0; right: -300px; width: 300px; height: 100%;
             background: var(--box-bg); border-left: 3px solid var(--border-color);
-            z-index: 1000; padding: 60px 20px; transition: 0.5s ease;
+            z-index: 11000; padding: 60px 20px; transition: 0.5s ease;
         }
         .sidebar.active { right: 0; }
-        .sidebar-link {
-            display: block; color: var(--text-color); text-decoration: none;
-            font-size: 1.3rem; margin: 20px 0; font-weight: bold; padding: 10px;
-        }
+        .sidebar-link { display: block; color: var(--text-color); text-decoration: none; font-size: 1.3rem; margin: 20px 0; font-weight: bold; }
 
-        .fair-container { text-align: center; padding: 20px; }
-        .ig-link {
-            display: inline-block; margin-top: 20px; padding: 15px 30px;
-            background: linear-gradient(45deg, #f09433, #bc1888);
-            color: white; text-decoration: none; border-radius: 50px; font-weight: bold;
-        }
-
-        .footer { font-size: 2.5rem; font-weight: 900; text-align: center; margin-top: 40px; text-shadow: var(--neon-glow); }
+        .footer { font-size: 2.8rem; font-weight: 900; text-align: center; margin-top: 40px; text-shadow: var(--neon-glow); }
         .neon-text { text-shadow: var(--neon-glow); }
     </style>
 </head>
 <body>
 
-    <div id="landing-page" onclick="enterApp()">
-        <div class="eyes-container">
-            <div class="eye"><div class="pupil"></div></div>
-            <div class="eye"><div class="pupil"></div></div>
-        </div>
+    <div id="eye-system">
+        <div class="eye"><div class="pupil"></div></div>
+        <div class="eye"><div class="pupil"></div></div>
+    </div>
+
+    <div id="landing-overlay" onclick="requestAndEnter()">
         <div class="enter-hint neon-text">Click to Enter</div>
-        <div class="footer neon-text" style="position:fixed; bottom:30px;">承蔚老帥了</div>
+        <div class="footer neon-text">承蔚老帥了</div>
     </div>
 
     <div id="main-app">
         <header>
             <h1 id="header-title" class="neon-text">Cipher Tool</h1>
             <div class="nav-controls">
-                <button class="icon-btn" onclick="toggleTheme()">🌓</button>
-                <button class="icon-btn" onclick="toggleSidebar()">Menu</button>
+                <button class="icon-btn" onclick="toggleTheme()" style="background:none; border:1px solid var(--border-color); color:var(--text-color); padding:8px 15px; border-radius:8px; cursor:pointer;">🌓</button>
+                <button class="icon-btn" onclick="toggleSidebar()" style="background:none; border:1px solid var(--border-color); color:var(--text-color); padding:8px 15px; border-radius:8px; cursor:pointer;">Menu</button>
             </div>
         </header>
 
         <nav class="sidebar" id="sidebar">
-            <button class="icon-btn" style="position:absolute; top:15px; left:15px;" onclick="toggleSidebar()">Close</button>
+            <button class="icon-btn" style="position:absolute; top:15px; left:15px; background:none; border:1px solid var(--border-color); color:var(--text-color);" onclick="toggleSidebar()">Close</button>
             <a href="#" class="sidebar-link" onclick="showSection('classic')">Classical Ciphers</a>
             <a href="#" class="sidebar-link" onclick="showSection('modern')">Modern Ciphers</a>
             <a href="#" class="sidebar-link" onclick="showSection('fair')">竹商園遊會</a>
         </nav>
 
         <div id="main-content" class="container">
-            <textarea id="input" rows="4" placeholder="Input text here..."></textarea>
-            
+            <textarea id="input" rows="4" placeholder="Input here..."></textarea>
             <div id="section-classic">
                 <h2>Classical</h2>
                 <div class="btn-grid">
@@ -170,7 +170,6 @@
                     <button class="tool-btn" onclick="runAtbash()">Atbash</button>
                 </div>
             </div>
-
             <div id="section-modern" style="display:none;">
                 <h2>Modern</h2>
                 <div class="btn-grid">
@@ -180,17 +179,16 @@
                     <button class="tool-btn" onclick="runBinary()">Binary</button>
                 </div>
             </div>
-
-            <div id="output" class="result-box">Waiting for command...</div>
+            <div id="output" class="result-box">Waiting...</div>
             <div class="footer neon-text">承蔚老帥了</div>
         </div>
 
         <div id="fair-content" class="container" style="display:none;">
-            <div class="fair-container">
+            <div class="fair-container" style="text-align:center;">
                 <div class="footer neon-text" style="font-size:3rem; margin-bottom:20px;">5/9 記得要來<br>綜二1 喔喔</div>
                 <img src="67.gif" alt="67.gif" style="max-width:100%; border-radius:10px; border:2px solid var(--border-color); box-shadow:var(--neon-glow);" onerror="this.style.display='none'">
                 <br>
-                <a href="https://www.instagram.com/hccvs_da21?igsh=MWdmNHp6aTdkbTAxaQ==" target="_blank" class="ig-link">快來看看吧</a>
+                <a href="https://www.instagram.com/hccvs_da21?igsh=MWdmNHp6aTdkbTAxaQ==" target="_blank" style="display:inline-block; margin-top:20px; padding:15px 30px; background:linear-gradient(45deg,#f09433,#bc1888); color:white; text-decoration:none; border-radius:50px; font-weight:bold;">快來看看吧</a>
                 <div class="footer neon-text" style="margin-top:60px;">承蔚老帥了</div>
             </div>
         </div>
@@ -199,75 +197,66 @@
     <script>
         const pupils = document.querySelectorAll('.pupil');
 
-        // --- 進入 App 邏輯 ---
-        function enterApp() {
-            // 請求陀螺儀權限 (iOS 13+ 需要使用者點擊觸發)
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        function requestAndEnter() {
+            // 陀螺儀請求
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            window.addEventListener('deviceorientation', handleOrientation);
-                        }
-                    })
+                    .then(response => { if (response === 'granted') window.addEventListener('deviceorientation', handleGyro); })
                     .catch(console.error);
             } else {
-                window.addEventListener('deviceorientation', handleOrientation);
+                window.addEventListener('deviceorientation', handleGyro);
             }
 
-            // 動畫切換
-            document.getElementById('landing-page').style.opacity = '0';
+            // 動畫切換：眼睛移動，遮罩消失
+            document.getElementById('eye-system').classList.add('active');
+            document.getElementById('landing-overlay').style.opacity = '0';
+            
             setTimeout(() => {
-                document.getElementById('landing-page').style.display = 'none';
+                document.getElementById('landing-overlay').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
-                // 預設進入園遊會介面
-                showSection('fair');
+                setTimeout(() => { document.getElementById('main-app').style.opacity = '1'; }, 50);
+                showSection('fair'); 
             }, 800);
         }
 
-        // --- 眼睛跟隨邏輯 ---
-        // 電腦版：隨鼠標
+        // 跟隨鼠標
         window.addEventListener('mousemove', (e) => {
             pupils.forEach(pupil => {
                 const rect = pupil.parentElement.getBoundingClientRect();
                 const eyeX = rect.left + rect.width / 2;
                 const eyeY = rect.top + rect.height / 2;
                 const angle = Math.atan2(e.clientY - eyeY, e.clientX - eyeX);
-                const distance = Math.min(rect.width / 4, Math.hypot(e.clientX - eyeX, e.clientY - eyeY) / 10);
+                const distance = Math.min(rect.width / 3, Math.hypot(e.clientX - eyeX, e.clientY - eyeY) / 10);
                 const x = Math.cos(angle) * distance;
                 const y = Math.sin(angle) * distance;
                 pupil.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
             });
         });
 
-        // 手機版：隨陀螺儀
-        function handleOrientation(e) {
-            const xOffset = Math.min(Math.max(e.gamma / 2, -18), 18);
-            const yOffset = Math.min(Math.max((e.beta - 45) / 2, -18), 18);
+        // 陀螺儀邏輯
+        function handleGyro(e) {
+            const x = Math.min(Math.max(e.gamma / 1.5, -40), 40);
+            const y = Math.min(Math.max((e.beta - 45) / 1.5, -40), 40);
             pupils.forEach(pupil => {
-                pupil.style.transform = `translate(calc(-50% + ${xOffset}px), calc(-50% + ${yOffset}px))`;
+                pupil.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
             });
         }
 
-        // --- UI 控制 ---
         function toggleTheme() { document.body.classList.toggle('light-mode'); }
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
 
         function showSection(type) {
             if (document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
-            
             document.getElementById('main-content').style.display = (type === 'fair') ? 'none' : 'block';
             document.getElementById('fair-content').style.display = (type === 'fair') ? 'block' : 'none';
-            
+            document.getElementById('header-title').innerText = (type === 'fair') ? '竹商園遊會' : 'Cipher Tool';
             if (type !== 'fair') {
                 document.getElementById('section-classic').style.display = (type === 'classic') ? 'block' : 'none';
                 document.getElementById('section-modern').style.display = (type === 'modern') ? 'block' : 'none';
-                document.getElementById('header-title').innerText = 'Cipher Tool';
-            } else {
-                document.getElementById('header-title').innerText = '竹商園遊會';
             }
         }
 
-        // --- 密碼工具邏輯 (保持不變) ---
+        // 工具邏輯
         function runCaesar() {
             let s = document.getElementById('input').value;
             let res = "Caesar Brute Force:\n";
@@ -290,7 +279,7 @@
             try {
                 let res = s.split(/\s+/).map(n => String.fromCharCode(parseInt(n))).join('');
                 document.getElementById('output').innerText = "ASCII Result:\n" + res;
-            } catch(e) { document.getElementById('output').innerText = "Error: Use decimal numbers."; }
+            } catch(e) { document.getElementById('output').innerText = "Error: Use decimal."; }
         }
         function runBase64() {
             try { document.getElementById('output').innerText = "Base64 Result:\n" + atob(document.getElementById('input').value.trim()); }
