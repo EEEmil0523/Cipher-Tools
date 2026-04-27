@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cipher Tool - 承蔚製作</title>
+    <title>Cipher Tool - 承蔚老帥了</title>
     <style>
-        /* 定義變數方便切換主題 */
         :root {
             --bg-color: #121212;
             --text-color: #00ff00;
@@ -15,195 +14,235 @@
             --shadow: 0 0 10px #00ff00;
         }
 
-        /* 白天模式：白底紫字 */
         .light-mode {
             --bg-color: #ffffff;
             --text-color: #800080; /* 紫色 */
-            --box-bg: #f0f0f0;
-            --btn-bg: #e0e0e0;
+            --box-bg: #f5f5f5;
+            --btn-bg: #ffffff;
             --border-color: #800080;
-            --shadow: 0 0 10px rgba(128, 0, 128, 0.3);
+            --shadow: 0 0 10px rgba(128, 0, 128, 0.4);
         }
 
-        * { box-sizing: border-box; transition: all 0.3s ease; }
-
+        * { box-sizing: border-box; transition: 0.3s; }
         body { 
             background: var(--bg-color); 
             color: var(--text-color); 
             font-family: 'Segoe UI', monospace; 
-            margin: 0;
-            padding: 20px;
-            overflow-x: hidden;
+            margin: 0; padding: 20px;
         }
 
-        /* 頂部 Header */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 15px; border-bottom: 2px solid var(--border-color);
         }
 
-        /* 切換按鈕 & 選單按鈕 */
-        .nav-controls { display: flex; gap: 15px; align-items: center; }
         .icon-btn { 
             background: none; border: 1px solid var(--border-color); 
             color: var(--text-color); font-size: 1.5rem; 
-            padding: 5px 10px; cursor: pointer; border-radius: 5px;
+            padding: 8px 12px; cursor: pointer; border-radius: 8px;
         }
 
-        .container { max-width: 800px; margin: auto; animation: fadeIn 1s ease; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        h1 { font-size: 2rem; margin: 0; }
+        .container { max-width: 800px; margin: auto; animation: fadeInUp 0.8s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         textarea { 
             width: 100%; background: var(--box-bg); 
             color: inherit; border: 2px solid var(--border-color); 
-            padding: 15px; font-size: 1.2rem; border-radius: 10px;
-            margin-top: 20px;
+            padding: 15px; font-size: 1.4rem; border-radius: 10px;
+            margin-top: 20px; outline: none;
         }
 
-        .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        h2 { margin-top: 25px; border-left: 5px solid var(--border-color); padding-left: 10px; }
+
+        .btn-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+            gap: 12px; margin-top: 15px; 
+        }
 
         button.tool-btn { 
-            flex: 1; min-width: 100px;
             background: var(--btn-bg); color: var(--text-color); 
-            border: 1px solid var(--border-color); padding: 15px; 
+            border: 2px solid var(--border-color); padding: 15px; 
             font-size: 1.1rem; font-weight: bold; cursor: pointer;
-            border-radius: 8px;
+            border-radius: 10px;
         }
-        button.tool-btn:active { transform: scale(0.95); }
-        button.tool-btn:hover { box-shadow: var(--shadow); }
+        button.tool-btn:hover { background: var(--text-color); color: var(--bg-color); box-shadow: var(--shadow); }
+        button.tool-btn:active { transform: scale(0.9); }
 
         .result-box { 
-            margin-top: 20px; white-space: pre-wrap; 
-            background: var(--box-bg); padding: 20px; 
-            border-left: 8px solid var(--border-color); 
-            font-size: 1.1rem; border-radius: 0 10px 10px 0;
+            margin-top: 25px; white-space: pre-wrap; 
+            background: #000; color: #00ff00; /* 結果框強制維持黑客綠才有Feel */
+            padding: 20px; border: 1px solid var(--border-color);
+            font-size: 1.2rem; border-radius: 10px; min-height: 120px;
         }
+        .light-mode .result-box { background: #f0f0f0; color: #800080; }
 
-        /* 側邊導覽選單 */
+        /* 側邊選單 */
         .sidebar {
-            position: fixed; top: 0; right: -280px; width: 280px; height: 100%;
-            background: var(--box-bg); border-left: 2px solid var(--border-color);
-            z-index: 1000; padding: 50px 20px;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            position: fixed; top: 0; right: -300px; width: 300px; height: 100%;
+            background: var(--box-bg); border-left: 3px solid var(--border-color);
+            z-index: 1000; padding: 60px 25px;
         }
         .sidebar.active { right: 0; }
+        .sidebar h3 { color: var(--text-color); opacity: 0.7; font-size: 0.9rem; margin-top: 30px; }
         .sidebar-link {
             display: block; color: var(--text-color); text-decoration: none;
-            font-size: 1.5rem; margin-bottom: 30px; font-weight: bold;
+            font-size: 1.4rem; margin: 15px 0; font-weight: bold;
         }
 
-        /* 園遊會內容 */
-        #fair-content { display: none; text-align: center; padding-top: 50px; }
-        .fair-big-text { 
-            font-size: 3.5rem; font-weight: 900; line-height: 1.2;
-            color: var(--text-color); text-shadow: var(--shadow);
-            animation: pulse 2s infinite;
+        /* 園遊會 */
+        .fair-container { text-align: center; padding: 40px 10px; }
+        .fair-title { font-size: 3rem; font-weight: 900; animation: shake 0.5s infinite; }
+        @keyframes shake { 0% {transform: rotate(1deg)} 50% {transform: rotate(-1deg)} 100% {transform: rotate(1deg)} }
+        
+        .ig-link {
+            display: inline-block; margin-top: 30px; padding: 15px 30px;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white; text-decoration: none; border-radius: 50px;
+            font-size: 1.5rem; font-weight: bold; transition: 0.5s;
         }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .ig-link:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(255,0,0,0.5); }
 
-        .footer-text { margin-top: 50px; text-align: center; font-size: 2rem; font-weight: bold; }
-
-        /* 手機調整 */
-        @media (max-width: 600px) {
-            h1 { font-size: 1.5rem; }
-            .fair-big-text { font-size: 2.5rem; }
-        }
+        .footer { font-size: 2.5rem; font-weight: 900; text-align: center; margin-top: 50px; }
     </style>
 </head>
-<body>
+<body class="">
 
     <header>
-        <h1 id="page-title">Cipher Tool</h1>
+        <h1 id="header-title">Cipher Tool</h1>
         <div class="nav-controls">
-            <button class="icon-btn" onclick="toggleTheme()" title="切換模式">🌓</button>
+            <button class="icon-btn" onclick="toggleTheme()">🌓</button>
             <button class="icon-btn" onclick="toggleSidebar()">☰</button>
         </div>
     </header>
 
-    <div class="sidebar" id="sidebar">
-        <button class="icon-btn" style="position:absolute; top:10px; left:10px;" onclick="toggleSidebar()">✕</button>
-        <a href="#" class="sidebar-link" onclick="showPage('tool')">Cipher Tool</a>
-        <a href="#" class="sidebar-link" onclick="showPage('fair')">竹商園遊會</a>
-    </div>
+    <nav class="sidebar" id="sidebar">
+        <button class="icon-btn" style="position:absolute; top:15px; left:15px;" onclick="toggleSidebar()">✕</button>
+        
+        <h3>CLASSIFIED</h3>
+        <a href="#" class="sidebar-link" onclick="showSection('classic')">古密碼</a>
+        <a href="#" class="sidebar-link" onclick="showSection('modern')">現代密碼</a>
+        
+        <h3>EVENT</h3>
+        <a href="#" class="sidebar-link" onclick="showSection('fair')">竹商園遊會</a>
+    </nav>
 
-    <div id="tool-page" class="container">
-        <textarea id="input" rows="4" placeholder="輸入文字..."></textarea>
-        <div class="btn-group">
-            <button class="tool-btn" onclick="runCaesar()">Caesar</button>
-            <button class="tool-btn" onclick="runAtbash()">Atbash</button>
-            <button class="tool-btn" onclick="runASCII()">ASCII</button>
+    <div id="main-content" class="container">
+        <textarea id="input" rows="4" placeholder="請在此輸入內容..."></textarea>
+
+        <div id="section-classic">
+            <h2>古密碼 (Classical)</h2>
+            <div class="btn-grid">
+                <button class="tool-btn" onclick="runCaesar()">Caesar</button>
+                <button class="tool-btn" onclick="runAtbash()">Atbash</button>
+            </div>
         </div>
+
+        <div id="section-modern">
+            <h2>現代密碼 (Modern)</h2>
+            <div class="btn-grid">
+                <button class="tool-btn" onclick="runASCII()">ASCII (Dec)</button>
+                <button class="tool-btn" onclick="runBase64()">Base64</button>
+                <button class="tool-btn" onclick="runHex()">Hex</button>
+                <button class="tool-btn" onclick="runBinary()">Binary</button>
+            </div>
+        </div>
+
         <div id="output" class="result-box">Loading...</div>
-        <div class="footer-text">承蔚老帥了</div>
+        <div class="footer">承蔚老帥了</div>
     </div>
 
-    <div id="fair-page" class="container" style="display:none">
-        <div class="fair-big-text">
-            5/9 記得要來<br>綜二1 喔喔⭐️⭐️⭐️
+    <div id="fair-content" class="container" style="display:none;">
+        <div class="fair-container">
+            <div class="fair-title">5/9 記得要來<br>綜二1 喔喔⭐️⭐️⭐️</div>
+            <a href="https://www.instagram.com/hccvs_da21?igsh=MWdmNHp6aTdkbTAxaQ==" target="_blank" class="ig-link">快來看看吧</a>
+            <div class="footer" style="margin-top:80px;">承蔚老帥了</div>
         </div>
-        <div class="footer-text" style="margin-top:100px;">不來你會後悔！</div>
     </div>
 
     <script>
-        // 切換主題
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-        }
+        function toggleTheme() { document.body.classList.toggle('light-mode'); }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
 
-        // 切換側邊欄
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-        }
+        function showSection(type) {
+            toggleSidebar();
+            const main = document.getElementById('main-content');
+            const fair = document.getElementById('fair-content');
+            const classic = document.getElementById('section-classic');
+            const modern = document.getElementById('section-modern');
 
-        // 分頁控制
-        function showPage(page) {
-            toggleSidebar(); // 點擊後關閉選單
-            if(page === 'tool') {
-                document.getElementById('tool-page').style.display = 'block';
-                document.getElementById('fair-page').style.display = 'none';
-                document.getElementById('page-title').innerText = 'Cipher Tool';
+            if (type === 'fair') {
+                main.style.display = 'none';
+                fair.style.display = 'block';
+                document.getElementById('header-title').innerText = '竹商園遊會';
             } else {
-                document.getElementById('tool-page').style.display = 'none';
-                document.getElementById('fair-page').style.display = 'block';
-                document.getElementById('page-title').innerText = '竹商園遊會';
+                main.style.display = 'block';
+                fair.style.display = 'none';
+                document.getElementById('header-title').innerText = 'Cipher Tool';
+                classic.style.display = (type === 'classic') ? 'block' : 'none';
+                modern.style.display = (type === 'modern') ? 'block' : 'none';
             }
         }
 
-        // 原有邏輯保持不變
-        function rot(str, shift) {
-            return str.replace(/[a-zA-Z]/g, function(c) {
-                const start = c <= 'Z' ? 65 : 97;
-                return String.fromCharCode(((c.charCodeAt(0) - start + shift) % 26) + start);
-            });
-        }
-        function atbash(str) {
-            return str.replace(/[a-zA-Z]/g, function(c) {
-                const base = c <= 'Z' ? 65 + 90 : 97 + 122;
-                return String.fromCharCode(base - c.charCodeAt(0));
-            });
-        }
-        function toASCII(str) {
-            return str.split('').map(c => c.charCodeAt(0)).join(' ');
-        }
+        // --- 密碼邏輯 ---
+
+        // Caesar Brute Force
         function runCaesar() {
-            let input = document.getElementById('input').value;
-            let res = "Caesar Result:\n";
-            for (let i = 1; i < 26; i++) { res += i.toString().padStart(2, ' ') + " | " + rot(input, i) + "\n"; }
+            let s = document.getElementById('input').value;
+            let res = "Caesar Brute Force:\n";
+            for (let i = 1; i < 26; i++) {
+                res += i.toString().padStart(2, '0') + " | " + s.replace(/[a-zA-Z]/g, c => {
+                    const b = c <= 'Z' ? 65 : 97;
+                    return String.fromCharCode((c.charCodeAt(0) - b + i) % 26 + b);
+                }) + "\n";
+            }
             document.getElementById('output').innerText = res;
         }
+
+        // Atbash
         function runAtbash() {
-            let input = document.getElementById('input').value;
-            document.getElementById('output').innerText = "Atbash Result:\n" + atbash(input);
+            let s = document.getElementById('input').value;
+            document.getElementById('output').innerText = "Atbash Result:\n" + s.replace(/[a-zA-Z]/g, c => {
+                const b = c <= 'Z' ? 65 + 90 : 97 + 122;
+                return String.fromCharCode(b - c.charCodeAt(0));
+            });
         }
+
+        // ASCII Decode (修正版：數字轉文字)
         function runASCII() {
-            let input = document.getElementById('input').value;
-            document.getElementById('output').innerText = "ASCII Result:\n" + toASCII(input);
+            let s = document.getElementById('input').value.trim();
+            try {
+                let res = s.split(/\s+/).map(n => String.fromCharCode(parseInt(n))).join('');
+                document.getElementById('output').innerText = "ASCII Decode Result:\n" + res;
+            } catch(e) { document.getElementById('output').innerText = "錯誤：請輸入十進位數字 (例如: 75 65)"; }
+        }
+
+        // Base64 Decode
+        function runBase64() {
+            let s = document.getElementById('input').value.trim();
+            try {
+                document.getElementById('output').innerText = "Base64 Decode:\n" + atob(s);
+            } catch(e) { document.getElementById('output').innerText = "錯誤：無效的 Base64 字串"; }
+        }
+
+        // Hex Decode
+        function runHex() {
+            let s = document.getElementById('input').value.replace(/\s+/g, '');
+            try {
+                let res = "";
+                for (let i = 0; i < s.length; i += 2) {
+                    res += String.fromCharCode(parseInt(s.substr(i, 2), 16));
+                }
+                document.getElementById('output').innerText = "Hex Decode:\n" + res;
+            } catch(e) { document.getElementById('output').innerText = "錯誤：無效的十六進位字串"; }
+        }
+
+        // Binary Decode
+        function runBinary() {
+            let s = document.getElementById('input').value.trim();
+            try {
+                let res = s.split(/\s+/).map(b => String.fromCharCode(parseInt(b, 2))).join('');
+                document.getElementById('output').innerText = "Binary Decode:\n" + res;
+            } catch(e) { document.getElementById('output').innerText = "錯誤：請輸入二進位數字 (例如: 01001011)"; }
         }
     </script>
 </body>
