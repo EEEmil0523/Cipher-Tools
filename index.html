@@ -2,122 +2,208 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>Cipher Tool - Classic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cipher Tool - 承蔚製作</title>
     <style>
-        /* 字體整體放大，並保持黑客綠風格 */
+        /* 定義變數方便切換主題 */
+        :root {
+            --bg-color: #121212;
+            --text-color: #00ff00;
+            --box-bg: #1e1e1e;
+            --btn-bg: #333;
+            --border-color: #00ff00;
+            --shadow: 0 0 10px #00ff00;
+        }
+
+        /* 白天模式：白底紫字 */
+        .light-mode {
+            --bg-color: #ffffff;
+            --text-color: #800080; /* 紫色 */
+            --box-bg: #f0f0f0;
+            --btn-bg: #e0e0e0;
+            --border-color: #800080;
+            --shadow: 0 0 10px rgba(128, 0, 128, 0.3);
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+
         body { 
-            background: #121212; 
-            color: #00ff00; 
-            font-family: monospace; 
-            padding: 30px; 
-            font-size: 1.3rem; 
+            background: var(--bg-color); 
+            color: var(--text-color); 
+            font-family: 'Segoe UI', monospace; 
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
         }
-        .container { max-width: 900px; margin: auto; }
-        
-        /* 輸入框放大 */
+
+        /* 頂部 Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* 切換按鈕 & 選單按鈕 */
+        .nav-controls { display: flex; gap: 15px; align-items: center; }
+        .icon-btn { 
+            background: none; border: 1px solid var(--border-color); 
+            color: var(--text-color); font-size: 1.5rem; 
+            padding: 5px 10px; cursor: pointer; border-radius: 5px;
+        }
+
+        .container { max-width: 800px; margin: auto; animation: fadeIn 1s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 { font-size: 2rem; margin: 0; }
+
         textarea { 
-            width: 100%; 
-            background: #1e1e1e; 
-            color: #fff; 
-            border: 2px solid #333; 
-            padding: 15px; 
-            font-size: 1.3rem; 
-            border-radius: 5px;
+            width: 100%; background: var(--box-bg); 
+            color: inherit; border: 2px solid var(--border-color); 
+            padding: 15px; font-size: 1.2rem; border-radius: 10px;
+            margin-top: 20px;
         }
-        
-        /* 按鈕放大與美化 */
-        button { 
-            background: #333; 
-            color: #00ff00; 
-            border: 1px solid #00ff00; 
-            padding: 15px 30px; 
-            cursor: pointer; 
-            margin-top: 15px; 
-            font-size: 1.2rem; 
-            font-weight: bold;
-            transition: 0.3s;
+
+        .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+
+        button.tool-btn { 
+            flex: 1; min-width: 100px;
+            background: var(--btn-bg); color: var(--text-color); 
+            border: 1px solid var(--border-color); padding: 15px; 
+            font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            border-radius: 8px;
         }
-        button:hover { background: #00ff00; color: #000; box-shadow: 0 0 10px #00ff00; }
-        
-        /* 結果框 */
+        button.tool-btn:active { transform: scale(0.95); }
+        button.tool-btn:hover { box-shadow: var(--shadow); }
+
         .result-box { 
-            margin-top: 25px; 
-            white-space: pre-wrap; 
-            background: #000; 
-            padding: 20px; 
-            border-left: 8px solid #00ff00; 
-            min-height: 100px;
+            margin-top: 20px; white-space: pre-wrap; 
+            background: var(--box-bg); padding: 20px; 
+            border-left: 8px solid var(--border-color); 
+            font-size: 1.1rem; border-radius: 0 10px 10px 0;
         }
 
-        /* 專屬簽名 */
-        .cool-text {
-            margin-top: 40px;
-            font-size: 2.5rem;
-            font-weight: 900;
-            text-align: center;
-            text-shadow: 3px 3px 10px #00ff00;
+        /* 側邊導覽選單 */
+        .sidebar {
+            position: fixed; top: 0; right: -280px; width: 280px; height: 100%;
+            background: var(--box-bg); border-left: 2px solid var(--border-color);
+            z-index: 1000; padding: 50px 20px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+        }
+        .sidebar.active { right: 0; }
+        .sidebar-link {
+            display: block; color: var(--text-color); text-decoration: none;
+            font-size: 1.5rem; margin-bottom: 30px; font-weight: bold;
         }
 
-        h1 { font-size: 2.5rem; text-shadow: 0 0 5px #00ff00; }
+        /* 園遊會內容 */
+        #fair-content { display: none; text-align: center; padding-top: 50px; }
+        .fair-big-text { 
+            font-size: 3.5rem; font-weight: 900; line-height: 1.2;
+            color: var(--text-color); text-shadow: var(--shadow);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        .footer-text { margin-top: 50px; text-align: center; font-size: 2rem; font-weight: bold; }
+
+        /* 手機調整 */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5rem; }
+            .fair-big-text { font-size: 2.5rem; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Cipher Tool</h1>
-        <textarea id="input" rows="5" placeholder="在此輸入文字或密文..."></textarea>
-        
-        <div>
-            <button onclick="runCaesar()">Caesar</button>
-            <button onclick="runAtbash()">Atbash</button>
-            <button onclick="runASCII()">ASCII</button>
+
+    <header>
+        <h1 id="page-title">Cipher Tool</h1>
+        <div class="nav-controls">
+            <button class="icon-btn" onclick="toggleTheme()" title="切換模式">🌓</button>
+            <button class="icon-btn" onclick="toggleSidebar()">☰</button>
         </div>
+    </header>
 
+    <div class="sidebar" id="sidebar">
+        <button class="icon-btn" style="position:absolute; top:10px; left:10px;" onclick="toggleSidebar()">✕</button>
+        <a href="#" class="sidebar-link" onclick="showPage('tool')">Cipher Tool</a>
+        <a href="#" class="sidebar-link" onclick="showPage('fair')">竹商園遊會</a>
+    </div>
+
+    <div id="tool-page" class="container">
+        <textarea id="input" rows="4" placeholder="輸入文字..."></textarea>
+        <div class="btn-group">
+            <button class="tool-btn" onclick="runCaesar()">Caesar</button>
+            <button class="tool-btn" onclick="runAtbash()">Atbash</button>
+            <button class="tool-btn" onclick="runASCII()">ASCII</button>
+        </div>
         <div id="output" class="result-box">Loading...</div>
+        <div class="footer-text">承蔚老帥了</div>
+    </div>
 
-        <div class="cool-text">承蔚老帥了</div>
+    <div id="fair-page" class="container" style="display:none">
+        <div class="fair-big-text">
+            5/9 記得要來<br>綜二1 喔喔⭐️⭐️⭐️
+        </div>
+        <div class="footer-text" style="margin-top:100px;">不來你會後悔！</div>
     </div>
 
     <script>
-        // Caesar (ROT) 邏輯
+        // 切換主題
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+        }
+
+        // 切換側邊欄
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // 分頁控制
+        function showPage(page) {
+            toggleSidebar(); // 點擊後關閉選單
+            if(page === 'tool') {
+                document.getElementById('tool-page').style.display = 'block';
+                document.getElementById('fair-page').style.display = 'none';
+                document.getElementById('page-title').innerText = 'Cipher Tool';
+            } else {
+                document.getElementById('tool-page').style.display = 'none';
+                document.getElementById('fair-page').style.display = 'block';
+                document.getElementById('page-title').innerText = '竹商園遊會';
+            }
+        }
+
+        // 原有邏輯保持不變
         function rot(str, shift) {
             return str.replace(/[a-zA-Z]/g, function(c) {
                 const start = c <= 'Z' ? 65 : 97;
                 return String.fromCharCode(((c.charCodeAt(0) - start + shift) % 26) + start);
             });
         }
-
-        // Atbash 邏輯
         function atbash(str) {
             return str.replace(/[a-zA-Z]/g, function(c) {
                 const base = c <= 'Z' ? 65 + 90 : 97 + 122;
                 return String.fromCharCode(base - c.charCodeAt(0));
             });
         }
-
-        // ASCII 轉換邏輯
         function toASCII(str) {
             return str.split('').map(c => c.charCodeAt(0)).join(' ');
         }
-
         function runCaesar() {
             let input = document.getElementById('input').value;
-            let res = "Caesar Brute Force (1-25):\n" + "=".repeat(25) + "\nSHFT | DATA\n";
-            for (let i = 1; i < 26; i++) {
-                res += i.toString().padStart(4, ' ') + " | " + rot(input, i) + "\n";
-            }
+            let res = "Caesar Result:\n";
+            for (let i = 1; i < 26; i++) { res += i.toString().padStart(2, ' ') + " | " + rot(input, i) + "\n"; }
             document.getElementById('output').innerText = res;
         }
-
         function runAtbash() {
             let input = document.getElementById('input').value;
-            let res = "Atbash 鏡像結果:\n" + "=".repeat(25) + "\n" + atbash(input);
-            document.getElementById('output').innerText = res;
+            document.getElementById('output').innerText = "Atbash Result:\n" + atbash(input);
         }
-
         function runASCII() {
             let input = document.getElementById('input').value;
-            let res = "ASCII Decimal 編碼:\n" + "=".repeat(25) + "\n" + toASCII(input);
-            document.getElementById('output').innerText = res;
+            document.getElementById('output').innerText = "ASCII Result:\n" + toASCII(input);
         }
     </script>
 </body>
