@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cipher Tool - Eternal Eyes</title>
+    <title>Cipher Tool - Alive Eyes</title>
     <style>
         :root {
             --bg-color: #0a0a0a;
@@ -35,35 +35,68 @@
             width: 100%; height: 100%;
         }
 
+        /* ===== 頂部固定眼睛區 ===== */
         #eye-header {
             position: fixed; top: 0; left: 0; width: 100%;
-            height: 180px; background: var(--bg-color);
+            height: 220px; background: var(--bg-color);
             display: flex; justify-content: center; align-items: center;
             gap: 40px; z-index: 1000;
             border-bottom: 2px solid var(--border-color);
             transition: height 0.5s ease;
         }
 
+        /* 進入後的縮小狀態 */
         #eye-header.compact { height: 140px; }
 
+        /* ===== 新版靈魂之窗 ===== */
         .eye {
-            width: 110px; height: 110px; background: #fff;
-            border-radius: 50%; position: relative;
-            border: 6px solid var(--border-color);
-            box-shadow: var(--neon-glow); overflow: hidden;
+            width: 160px; height: 160px; 
+            background: white; border-radius: 50%; 
+            position: relative; overflow: hidden;
+            border: 4px solid var(--border-color);
+            box-shadow: var(--neon-glow);
             transition: all 0.5s ease;
         }
-        #eye-header.compact .eye { width: 90px; height: 90px; }
+        
+        #eye-header.compact .eye { width: 100px; height: 100px; }
 
         .pupil {
-            width: 65px; height: 65px; background: #000;
-            border-radius: 50%; position: absolute;
-            left: 50%; top: 50%;
+            width: 100px; /* 瞳孔加大 */
+            height: 100px; 
+            background: black; border-radius: 50%; 
+            position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            /* 【修改處】拉長過渡時間，製造明顯的延遲滑順感 */
-            transition: transform 0.4s ease-out;
+            transition: transform 0.4s ease-out; /* 保留你要的延遲感 */
+        }
+        
+        #eye-header.compact .pupil { width: 60px; height: 60px; }
+
+        /* 瞳孔反光 (靈魂白點) */
+        .pupil::after {
+            content: ''; width: 20px; height: 20px; 
+            background: white; border-radius: 50%; 
+            position: absolute; top: 18px; left: 18px;
+            transition: all 0.5s ease;
+        }
+        
+        #eye-header.compact .pupil::after { width: 12px; height: 12px; top: 10px; left: 10px; }
+
+        /* 眨眼動畫 */
+        .eyelid {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--bg-color); /* 眼皮顏色跟著背景走 */
+            border-radius: 50%;
+            transform: scaleY(0); transform-origin: top;
+            animation: blink 5s infinite;
         }
 
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(0); }
+            92%, 95% { transform: scaleY(1); }
+        }
+
+        /* ===== 介面其他元素 ===== */
         #landing-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-color); z-index: 9999;
@@ -78,7 +111,8 @@
         }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 
-        #main-app { display: none; padding: 180px 20px 40px 20px; }
+        #main-app { display: none; padding: 220px 20px 40px 20px; }
+        #eye-header.compact ~ #main-app { padding-top: 160px; } /* 自動調整內距 */
 
         header {
             display: flex; justify-content: space-between; align-items: center;
@@ -134,8 +168,14 @@
 <body>
 
     <div id="eye-header">
-        <div class="eye"><div class="pupil"></div></div>
-        <div class="eye"><div class="pupil"></div></div>
+        <div class="eye">
+            <div class="pupil"></div>
+            <div class="eyelid"></div>
+        </div>
+        <div class="eye">
+            <div class="pupil"></div>
+            <div class="eyelid"></div>
+        </div>
     </div>
 
     <div id="landing-overlay" onclick="requestAndEnter()">
@@ -209,33 +249,51 @@
             }, 600);
         }
 
-        window.addEventListener('mousemove', (e) => {
+        // 動態計算極限半徑 (防止脫窗)
+        function updatePupilPosition(xOffset, yOffset) {
             pupils.forEach(pupil => {
-                const rect = pupil.parentElement.getBoundingClientRect();
-                const eyeX = rect.left + rect.width / 2;
-                const eyeY = rect.top + rect.height / 2;
-                const angle = Math.atan2(e.clientY - eyeY, e.clientX - eyeX);
+                const eyeRect = pupil.parentElement.getBoundingClientRect();
+                const pupilRect = pupil.getBoundingClientRect();
                 
-                // 【修改處】嚴格計算最大安全半徑：(眼睛寬度/2) - (瞳孔寬度/2) - (邊框容錯)
-                const maxRadius = (rect.width / 2) - 32.5 - 4; 
-                const targetDistance = Math.hypot(e.clientX - eyeX, e.clientY - eyeY) / 10;
+                // 眼白半徑 - 瞳孔半徑 - 邊框安全距離
+                const maxRadius = (eyeRect.width / 2) - (pupilRect.width / 2) - 4; 
                 
-                // 取兩者最小，保證瞳孔絕對不出界
-                const distance = Math.min(maxRadius, targetDistance);
+                // 計算目前偏移量的實際距離
+                const distance = Math.hypot(xOffset, yOffset);
                 
-                const x = Math.cos(angle) * distance;
-                const y = Math.sin(angle) * distance;
-                pupil.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+                let finalX = xOffset;
+                let finalY = yOffset;
+
+                // 如果超過了邊界，按比例縮小回邊界內
+                if (distance > maxRadius) {
+                    const ratio = maxRadius / distance;
+                    finalX = xOffset * ratio;
+                    finalY = yOffset * ratio;
+                }
+
+                pupil.style.transform = `translate(calc(-50% + ${finalX}px), calc(-50% + ${finalY}px))`;
             });
+        }
+
+        // 電腦版滑鼠
+        window.addEventListener('mousemove', (e) => {
+            if (pupils.length === 0) return;
+            const eyeRect = pupils[0].parentElement.getBoundingClientRect();
+            const eyeCenterX = eyeRect.left + eyeRect.width / 2;
+            const eyeCenterY = eyeRect.top + eyeRect.height / 2;
+            
+            // 降低滑鼠靈敏度來達成平滑感
+            const xOffset = (e.clientX - eyeCenterX) / 6;
+            const yOffset = (e.clientY - eyeCenterY) / 6;
+            
+            updatePupilPosition(xOffset, yOffset);
         });
 
+        // 手機版陀螺儀
         function handleGyro(e) {
-            // 【修改處】限縮手機陀螺儀最大位移像素，防止脫窗
-            const x = Math.min(Math.max(e.gamma / 1.5, -18), 18);
-            const y = Math.min(Math.max((e.beta - 45) / 1.5, -18), 18);
-            pupils.forEach(pupil => {
-                pupil.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
-            });
+            const xOffset = e.gamma * 1.5; // 放大陀螺儀數值
+            const yOffset = (e.beta - 45) * 1.5; 
+            updatePupilPosition(xOffset, yOffset);
         }
 
         function toggleTheme() { document.body.classList.toggle('light-mode'); }
@@ -251,6 +309,7 @@
             }
         }
 
+        // 密碼工具功能
         function runCaesar() {
             let s = document.getElementById('input').value;
             let res = "Result:\n";
