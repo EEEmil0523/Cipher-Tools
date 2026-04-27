@@ -35,20 +35,29 @@
             width: 100%; height: 100%;
         }
 
-        /* ===== 頂部固定眼睛區 ===== */
+        /* ===== 頂部固定眼睛區 (整合按鈕) ===== */
         #eye-header {
             position: fixed; top: 0; left: 0; width: 100%;
             height: 220px; background: var(--bg-color);
-            display: flex; justify-content: center; align-items: center;
-            gap: 40px; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: flex-start;
+            padding: 15px 20px; z-index: 1000;
             border-bottom: 2px solid var(--border-color);
             transition: height 0.5s ease;
         }
 
-        /* 進入後的縮小狀態 */
         #eye-header.compact { height: 140px; }
 
-        /* ===== 新版靈魂之窗 ===== */
+        .eyes-container {
+            position: absolute; left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex; gap: 40px; cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: gap 0.5s ease;
+        }
+
+        /* 縮小版時拉近眼睛距離，避免擋到兩側按鈕 */
+        #eye-header.compact .eyes-container { gap: 15px; }
+
         .eye {
             width: 160px; height: 160px; 
             background: white; border-radius: 50%; 
@@ -61,29 +70,25 @@
         #eye-header.compact .eye { width: 100px; height: 100px; }
 
         .pupil {
-            width: 100px; /* 瞳孔加大 */
-            height: 100px; 
+            width: 100px; height: 100px; 
             background: black; border-radius: 50%; 
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            /* 【修改處】大幅縮短延遲時間，保留極短的平滑過渡 */
             transition: transform 0.1s ease-out; 
         }
         
         #eye-header.compact .pupil { width: 60px; height: 60px; }
 
-        /* 瞳孔反光 (靈魂白點) */
+        /* 瞳孔反光 */
         .pupil::after {
             content: ''; width: 20px; height: 20px; 
             background: white; border-radius: 50%; 
             position: absolute; top: 18px; left: 18px;
-            /* 【修改處】反光點同步加速 */
             transition: all 0.1s ease-out;
         }
         
         #eye-header.compact .pupil::after { width: 12px; height: 12px; top: 10px; left: 10px; }
 
-        /* 眨眼動畫 */
         .eyelid {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
@@ -98,7 +103,14 @@
             92%, 95% { transform: scaleY(1); }
         }
 
-        /* ===== 介面其他元素 ===== */
+        /* ===== UI 與排版 ===== */
+        .icon-btn { 
+            background: var(--bg-color); border: 2px solid var(--border-color); 
+            color: var(--text-color); font-size: 1.5rem; 
+            padding: 10px 20px; cursor: pointer; border-radius: 12px; font-weight: 900;
+            box-shadow: var(--neon-glow); z-index: 1001;
+        }
+
         #landing-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-color); z-index: 9999;
@@ -113,20 +125,8 @@
         }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 
-        #main-app { display: none; padding: 220px 20px 40px 20px; }
-        #eye-header.compact ~ #main-app { padding-top: 160px; } /* 自動調整內距 */
-
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 20px; padding-bottom: 15px;
-        }
-
-        .icon-btn { 
-            background: none; border: 2px solid var(--border-color); 
-            color: var(--text-color); font-size: 1.8rem; 
-            padding: 10px 25px; cursor: pointer; border-radius: 12px; font-weight: 900;
-            box-shadow: var(--neon-glow);
-        }
+        #main-app { display: none; padding: 250px 20px 40px 20px; transition: padding-top 0.5s ease; }
+        #eye-header.compact ~ #main-app { padding-top: 170px; } 
 
         .container { max-width: 800px; margin: auto; animation: slideUp 0.6s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
@@ -165,19 +165,36 @@
 
         .footer { font-size: 3rem; font-weight: 900; text-align: center; margin-top: 50px; text-shadow: var(--neon-glow); }
         .neon-text { text-shadow: var(--neon-glow); }
+
+        /* ===== 電腦版專屬放大設定 (Media Query) ===== */
+        @media (min-width: 768px) {
+            #eye-header { padding: 25px 40px; }
+            .icon-btn { font-size: 2rem; padding: 12px 30px; }
+            .container { max-width: 900px; }
+            textarea { font-size: 2rem; padding: 25px; }
+            button.tool-btn { font-size: 1.6rem; padding: 25px; }
+            .result-box { font-size: 1.8rem; padding: 30px; }
+            .sidebar-link { font-size: 3.5rem; margin: 40px 0; }
+        }
     </style>
 </head>
 <body>
 
     <div id="eye-header">
-        <div class="eye">
-            <div class="pupil"></div>
-            <div class="eyelid"></div>
+        <button class="icon-btn" onclick="toggleTheme()">🌓</button>
+        
+        <div class="eyes-container" onclick="toggleEyeSize()" title="點擊切換大小">
+            <div class="eye">
+                <div class="pupil"></div>
+                <div class="eyelid"></div>
+            </div>
+            <div class="eye">
+                <div class="pupil"></div>
+                <div class="eyelid"></div>
+            </div>
         </div>
-        <div class="eye">
-            <div class="pupil"></div>
-            <div class="eyelid"></div>
-        </div>
+
+        <button class="icon-btn" onclick="toggleSidebar()">MENU</button>
     </div>
 
     <div id="landing-overlay" onclick="requestAndEnter()">
@@ -186,11 +203,6 @@
     </div>
 
     <div id="main-app">
-        <header>
-            <button class="icon-btn" onclick="toggleTheme()">🌓</button>
-            <button class="icon-btn" onclick="toggleSidebar()">MENU</button>
-        </header>
-
         <nav class="sidebar" id="sidebar">
             <button class="icon-btn" style="position:absolute; top:40px; right:40px;" onclick="toggleSidebar()">CLOSE</button>
             <a href="#" class="sidebar-link" onclick="showSection('classic')">Classical</a>
@@ -251,22 +263,22 @@
             }, 600);
         }
 
-        // 動態計算極限半徑 (防止脫窗)
+        // 點擊眼睛：在縮小與放大之間切換
+        function toggleEyeSize() {
+            document.getElementById('eye-header').classList.toggle('compact');
+        }
+
         function updatePupilPosition(xOffset, yOffset) {
             pupils.forEach(pupil => {
                 const eyeRect = pupil.parentElement.getBoundingClientRect();
                 const pupilRect = pupil.getBoundingClientRect();
                 
-                // 眼白半徑 - 瞳孔半徑 - 邊框安全距離
                 const maxRadius = (eyeRect.width / 2) - (pupilRect.width / 2) - 4; 
-                
-                // 計算目前偏移量的實際距離
                 const distance = Math.hypot(xOffset, yOffset);
                 
                 let finalX = xOffset;
                 let finalY = yOffset;
 
-                // 如果超過了邊界，按比例縮小回邊界內
                 if (distance > maxRadius) {
                     const ratio = maxRadius / distance;
                     finalX = xOffset * ratio;
@@ -277,7 +289,6 @@
             });
         }
 
-        // 電腦版滑鼠
         window.addEventListener('mousemove', (e) => {
             if (pupils.length === 0) return;
             const eyeRect = pupils[0].parentElement.getBoundingClientRect();
@@ -290,7 +301,6 @@
             updatePupilPosition(xOffset, yOffset);
         });
 
-        // 手機版陀螺儀
         function handleGyro(e) {
             const xOffset = e.gamma * 1.5; 
             const yOffset = (e.beta - 45) * 1.5; 
