@@ -11,7 +11,7 @@
             --box-bg: #111;
             --btn-bg: #222;
             --border-color: #00ff00;
-            --neon-glow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+            --neon-glow: 0 0 15px #00ff00, 0 0 30px #00ff00;
         }
 
         .light-mode {
@@ -20,50 +20,55 @@
             --box-bg: #f9f9f9;
             --btn-bg: #ffffff;
             --border-color: #800080;
-            --neon-glow: 0 0 10px #800080, 0 0 20px #800080;
+            --neon-glow: 0 0 15px #800080, 0 0 30px #800080;
         }
 
-        /* 禁用縮放與雙擊放大 */
         * { 
             box-sizing: border-box; 
-            transition: background 0.3s, color 0.3s; 
+            transition: background 0.4s, color 0.4s; 
             touch-action: manipulation; 
         }
 
-        body { 
+        body, html { 
             background: var(--bg-color); color: var(--text-color); 
-            font-family: 'Segoe UI', monospace; margin: 0; padding: 20px;
-            overflow-x: hidden;
+            font-family: 'Segoe UI', monospace; margin: 0; padding: 0;
+            overflow-x: hidden; width: 100%; height: 100%;
         }
 
-        /* 靈動大眼睛區域 */
-        .eyes-wrapper {
-            display: flex; justify-content: center; gap: 25px;
-            padding: 20px 0; margin-top: 10px;
+        /* 登陸頁面 (Landing Page) */
+        #landing-page {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; transition: opacity 0.8s ease, visibility 0.8s;
         }
+
+        /* 靈動大眼睛 - 加大瞳孔 */
+        .eyes-container { display: flex; gap: 40px; }
         .eye {
-            width: 70px; height: 70px; background: #fff;
+            width: 120px; height: 120px; background: #fff;
             border-radius: 50%; position: relative;
-            border: 3px solid var(--border-color);
-            box-shadow: var(--neon-glow);
-            overflow: hidden;
+            border: 4px solid var(--border-color);
+            box-shadow: var(--neon-glow); overflow: hidden;
         }
         .pupil {
-            width: 30px; height: 30px; background: #000;
+            width: 65px; height: 65px; background: #000;
             border-radius: 50%; position: absolute;
             left: 50%; top: 50%;
             transform: translate(-50%, -50%);
-            transition: 0.1s linear; /* 讓移動更順滑 */
+            /* 平滑滑動感核心 */
+            transition: transform 0.15s cubic-bezier(0.2, 0.5, 0.1, 1);
         }
 
-        .neon-text {
-            text-shadow: var(--neon-glow);
-            animation: flicker 2s infinite alternate;
+        .enter-hint {
+            margin-top: 40px; font-size: 1.2rem; 
+            text-transform: uppercase; letter-spacing: 3px;
+            animation: pulse 1.5s infinite;
         }
-        @keyframes flicker {
-            0%, 100% { text-shadow: var(--neon-glow); }
-            50% { text-shadow: 0 0 5px var(--border-color); }
-        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* 主程式內容 */
+        #main-app { display: none; padding: 20px; }
 
         header {
             display: flex; justify-content: space-between; align-items: center;
@@ -76,8 +81,8 @@
             padding: 8px 15px; cursor: pointer; border-radius: 8px; font-weight: bold;
         }
 
-        .container { max-width: 800px; margin: auto; animation: slideUp 0.6s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .container { max-width: 800px; margin: auto; animation: slideUp 0.6s ease; padding-top: 20px; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
         textarea { 
             width: 100%; background: var(--box-bg); 
@@ -125,86 +130,102 @@
         }
 
         .footer { font-size: 2.5rem; font-weight: 900; text-align: center; margin-top: 40px; text-shadow: var(--neon-glow); }
+        .neon-text { text-shadow: var(--neon-glow); }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1 id="header-title" class="neon-text">Cipher Tool</h1>
-        <div class="nav-controls">
-            <button class="icon-btn" onclick="toggleTheme()">🌓</button>
-            <button class="icon-btn" onclick="toggleSidebar()">Menu</button>
+    <div id="landing-page" onclick="enterApp()">
+        <div class="eyes-container">
+            <div class="eye"><div class="pupil"></div></div>
+            <div class="eye"><div class="pupil"></div></div>
         </div>
-    </header>
-
-    <div class="eyes-wrapper">
-        <div class="eye"><div class="pupil"></div></div>
-        <div class="eye"><div class="pupil"></div></div>
+        <div class="enter-hint neon-text">Click to Enter</div>
+        <div class="footer neon-text" style="position:fixed; bottom:30px;">承蔚老帥了</div>
     </div>
 
-    <nav class="sidebar" id="sidebar">
-        <button class="icon-btn" style="position:absolute; top:15px; left:15px;" onclick="toggleSidebar()">Close</button>
-        <a href="#" class="sidebar-link" onclick="showSection('classic')">Classical Ciphers</a>
-        <a href="#" class="sidebar-link" onclick="showSection('modern')">Modern Ciphers</a>
-        <a href="#" class="sidebar-link" onclick="showSection('fair')">竹商園遊會</a>
-    </nav>
-
-    <div id="main-content" class="container">
-        <textarea id="input" rows="4" placeholder="Input text here..."></textarea>
-        
-        <div id="section-classic">
-            <h2>Classical</h2>
-            <div class="btn-grid">
-                <button class="tool-btn" onclick="runCaesar()">Caesar</button>
-                <button class="tool-btn" onclick="runAtbash()">Atbash</button>
+    <div id="main-app">
+        <header>
+            <h1 id="header-title" class="neon-text">Cipher Tool</h1>
+            <div class="nav-controls">
+                <button class="icon-btn" onclick="toggleTheme()">🌓</button>
+                <button class="icon-btn" onclick="toggleSidebar()">Menu</button>
             </div>
+        </header>
+
+        <nav class="sidebar" id="sidebar">
+            <button class="icon-btn" style="position:absolute; top:15px; left:15px;" onclick="toggleSidebar()">Close</button>
+            <a href="#" class="sidebar-link" onclick="showSection('classic')">Classical Ciphers</a>
+            <a href="#" class="sidebar-link" onclick="showSection('modern')">Modern Ciphers</a>
+            <a href="#" class="sidebar-link" onclick="showSection('fair')">竹商園遊會</a>
+        </nav>
+
+        <div id="main-content" class="container">
+            <textarea id="input" rows="4" placeholder="Input text here..."></textarea>
+            
+            <div id="section-classic">
+                <h2>Classical</h2>
+                <div class="btn-grid">
+                    <button class="tool-btn" onclick="runCaesar()">Caesar</button>
+                    <button class="tool-btn" onclick="runAtbash()">Atbash</button>
+                </div>
+            </div>
+
+            <div id="section-modern" style="display:none;">
+                <h2>Modern</h2>
+                <div class="btn-grid">
+                    <button class="tool-btn" onclick="runASCII()">ASCII</button>
+                    <button class="tool-btn" onclick="runBase64()">Base64</button>
+                    <button class="tool-btn" onclick="runHex()">Hex</button>
+                    <button class="tool-btn" onclick="runBinary()">Binary</button>
+                </div>
+            </div>
+
+            <div id="output" class="result-box">Waiting for command...</div>
+            <div class="footer neon-text">承蔚老帥了</div>
         </div>
 
-        <div id="section-modern" style="display:none;">
-            <h2>Modern</h2>
-            <div class="btn-grid">
-                <button class="tool-btn" onclick="runASCII()">ASCII</button>
-                <button class="tool-btn" onclick="runBase64()">Base64</button>
-                <button class="tool-btn" onclick="runHex()">Hex</button>
-                <button class="tool-btn" onclick="runBinary()">Binary</button>
+        <div id="fair-content" class="container" style="display:none;">
+            <div class="fair-container">
+                <div class="footer neon-text" style="font-size:3rem; margin-bottom:20px;">5/9 記得要來<br>綜二1 喔喔</div>
+                <img src="67.gif" alt="67.gif" style="max-width:100%; border-radius:10px; border:2px solid var(--border-color); box-shadow:var(--neon-glow);" onerror="this.style.display='none'">
+                <br>
+                <a href="https://www.instagram.com/hccvs_da21?igsh=MWdmNHp6aTdkbTAxaQ==" target="_blank" class="ig-link">快來看看吧</a>
+                <div class="footer neon-text" style="margin-top:60px;">承蔚老帥了</div>
             </div>
-        </div>
-
-        <div id="output" class="result-box">Waiting for command...</div>
-        <div class="footer neon-text">承蔚老帥了</div>
-    </div>
-
-    <div id="fair-content" class="container" style="display:none;">
-        <div class="fair-container">
-            <div class="footer neon-text" style="font-size:3rem; margin-bottom:20px;">5/9 記得要來<br>綜二1 喔喔</div>
-            <img src="67.gif" alt="67.gif" style="max-width:100%; border-radius:10px; border:2px solid var(--border-color); box-shadow:var(--neon-glow);" onerror="this.style.display='none'">
-            <br>
-            <a href="https://www.instagram.com/hccvs_da21?igsh=MWdmNHp6aTdkbTAxaQ==" target="_blank" class="ig-link">快來看看吧</a>
-            <div class="footer neon-text" style="margin-top:60px;">承蔚老帥了</div>
         </div>
     </div>
 
     <script>
-        function toggleTheme() { document.body.classList.toggle('light-mode'); }
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        const pupils = document.querySelectorAll('.pupil');
 
-        function showSection(type) {
-            toggleSidebar();
-            document.getElementById('main-content').style.display = (type === 'fair') ? 'none' : 'block';
-            document.getElementById('fair-content').style.display = (type === 'fair') ? 'block' : 'none';
-            if (type !== 'fair') {
-                document.getElementById('section-classic').style.display = (type === 'classic') ? 'block' : 'none';
-                document.getElementById('section-modern').style.display = (type === 'modern') ? 'block' : 'none';
-                document.getElementById('header-title').innerText = 'Cipher Tool';
+        // --- 進入 App 邏輯 ---
+        function enterApp() {
+            // 請求陀螺儀權限 (iOS 13+ 需要使用者點擊觸發)
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        }
+                    })
+                    .catch(console.error);
             } else {
-                document.getElementById('header-title').innerText = '竹商園遊會';
+                window.addEventListener('deviceorientation', handleOrientation);
             }
+
+            // 動畫切換
+            document.getElementById('landing-page').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('landing-page').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                // 預設進入園遊會介面
+                showSection('fair');
+            }, 800);
         }
 
-        // --- 眼睛移動邏輯 ---
-        const pupils = document.querySelectorAll('.pupil');
-        
-        // 電腦版：隨鼠標移動
+        // --- 眼睛跟隨邏輯 ---
+        // 電腦版：隨鼠標
         window.addEventListener('mousemove', (e) => {
             pupils.forEach(pupil => {
                 const rect = pupil.parentElement.getBoundingClientRect();
@@ -218,16 +239,35 @@
             });
         });
 
-        // 手機版：隨陀螺儀移動
-        window.addEventListener('deviceorientation', (e) => {
-            const xOffset = Math.min(Math.max(e.gamma / 3, -15), 15); // 左右傾斜
-            const yOffset = Math.min(Math.max((e.beta - 45) / 3, -15), 15); // 前後傾斜
+        // 手機版：隨陀螺儀
+        function handleOrientation(e) {
+            const xOffset = Math.min(Math.max(e.gamma / 2, -18), 18);
+            const yOffset = Math.min(Math.max((e.beta - 45) / 2, -18), 18);
             pupils.forEach(pupil => {
                 pupil.style.transform = `translate(calc(-50% + ${xOffset}px), calc(-50% + ${yOffset}px))`;
             });
-        });
+        }
 
-        // --- 密碼工具邏輯 ---
+        // --- UI 控制 ---
+        function toggleTheme() { document.body.classList.toggle('light-mode'); }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
+        function showSection(type) {
+            if (document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
+            
+            document.getElementById('main-content').style.display = (type === 'fair') ? 'none' : 'block';
+            document.getElementById('fair-content').style.display = (type === 'fair') ? 'block' : 'none';
+            
+            if (type !== 'fair') {
+                document.getElementById('section-classic').style.display = (type === 'classic') ? 'block' : 'none';
+                document.getElementById('section-modern').style.display = (type === 'modern') ? 'block' : 'none';
+                document.getElementById('header-title').innerText = 'Cipher Tool';
+            } else {
+                document.getElementById('header-title').innerText = '竹商園遊會';
+            }
+        }
+
+        // --- 密碼工具邏輯 (保持不變) ---
         function runCaesar() {
             let s = document.getElementById('input').value;
             let res = "Caesar Brute Force:\n";
@@ -239,14 +279,12 @@
             }
             document.getElementById('output').innerText = res;
         }
-
         function runAtbash() {
             let s = document.getElementById('input').value;
             document.getElementById('output').innerText = "Atbash Result:\n" + s.replace(/[a-zA-Z]/g, c => {
                 const b = c <= 'Z' ? 65 + 90 : 97 + 122; return String.fromCharCode(b - c.charCodeAt(0));
             });
         }
-
         function runASCII() {
             let s = document.getElementById('input').value.trim();
             try {
@@ -254,12 +292,10 @@
                 document.getElementById('output').innerText = "ASCII Result:\n" + res;
             } catch(e) { document.getElementById('output').innerText = "Error: Use decimal numbers."; }
         }
-
         function runBase64() {
             try { document.getElementById('output').innerText = "Base64 Result:\n" + atob(document.getElementById('input').value.trim()); }
             catch(e) { document.getElementById('output').innerText = "Error: Invalid Base64."; }
         }
-
         function runHex() {
             let s = document.getElementById('input').value.replace(/\s+/g, '');
             try {
@@ -267,13 +303,12 @@
                 document.getElementById('output').innerText = "Hex Result:\n" + res;
             } catch(e) { document.getElementById('output').innerText = "Error: Invalid Hex."; }
         }
-
         function runBinary() {
             let s = document.getElementById('input').value.trim();
             try {
                 let res = s.split(/\s+/).map(b => String.fromCharCode(parseInt(b, 2))).join('');
                 document.getElementById('output').innerText = "Binary Result:\n" + res;
-            } catch(e) { document.getElementById('output').innerText = "Error: Use binary (e.g. 01001011)."; }
+            } catch(e) { document.getElementById('output').innerText = "Error: Use binary."; }
         }
     </script>
 </body>
