@@ -32,7 +32,7 @@
         body, html { 
             background: var(--bg-color); color: var(--text-color); 
             font-family: 'Segoe UI', monospace; margin: 0; padding: 0;
-            width: 100%; min-height: 100vh; /* 這裡修改為 min-height: 100vh */
+            width: 100%; min-height: 100vh;
         }
 
         /* ===== 頂部固定眼睛區 ===== */
@@ -266,7 +266,9 @@
         <div id="dino-content" class="container" style="display:none; text-align:center;">
             <div class="footer neon-text" style="font-size:3.5rem; margin-bottom:20px;">Dino-game</div>
             
-            <iframe src="https://t-rex.vercel.app/" width="100%" height="500px" style="border:4px solid var(--border-color); border-radius:20px; background:white; box-shadow: var(--neon-glow);"></iframe>
+            <button class="tool-btn" style="margin-bottom: 20px; padding: 15px 30px; border-radius: 50px;" onclick="goFullscreen()">🔲 全螢幕爽玩</button>
+            
+            <iframe id="dino-frame" src="https://t-rex.vercel.app/" width="100%" height="200px" scrolling="no" style="border:4px solid var(--border-color); border-radius:20px; background:white; box-shadow: var(--neon-glow); display:block; margin: 0 auto;"></iframe>
             
             <div class="footer-group" style="margin-top:60px;">
                 <div class="footer neon-text">承蔚老帥了</div>
@@ -332,7 +334,6 @@
             updatePupilPosition(xOffset, yOffset);
         }
 
-        /* 這裡修改為 document.documentElement */
         function toggleTheme() { document.documentElement.classList.toggle('light-mode'); }
         
         function toggleSidebar() { 
@@ -345,12 +346,10 @@
         function showSection(type) {
             if (document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
             
-            // 先隱藏所有區塊
             document.getElementById('main-content').style.display = 'none';
             document.getElementById('fair-content').style.display = 'none';
             document.getElementById('dino-content').style.display = 'none';
 
-            // 根據類型顯示對應區塊
             if (type === 'fair') {
                 document.getElementById('fair-content').style.display = 'block';
             } else if (type === 'dino') {
@@ -359,6 +358,29 @@
                 document.getElementById('main-content').style.display = 'block';
                 document.getElementById('section-classic').style.display = (type === 'classic') ? 'block' : 'none';
                 document.getElementById('section-modern').style.display = (type === 'modern') ? 'block' : 'none';
+            }
+        }
+
+        // 全螢幕與自動轉向功能
+        function goFullscreen() {
+            const gameFrame = document.getElementById('dino-frame');
+            
+            // 讓 iframe 進入全螢幕
+            if (gameFrame.requestFullscreen) {
+                gameFrame.requestFullscreen().then(() => {
+                    // 進入全螢幕後，強制鎖定螢幕為橫向 (Landscape)
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(function(error) {
+                            console.log('自動轉橫向失敗，可能需要手動旋轉:', error);
+                        });
+                    }
+                }).catch(err => {
+                    console.log(`全螢幕錯誤: ${err.message}`);
+                });
+            } else if (gameFrame.webkitRequestFullscreen) { /* 支援 Safari/iOS */
+                gameFrame.webkitRequestFullscreen();
+            } else if (gameFrame.msRequestFullscreen) { /* 支援早期 IE */
+                gameFrame.msRequestFullscreen();
             }
         }
 
