@@ -251,7 +251,7 @@
 
         <div id="fair-content" class="container" style="display:none;">
             <div style="text-align:center;">
-                <div class="footer neon-text fair-title" style="font-size:3.5rem;">5/9 記得要來<br>綜二1 喔喔喔喔⭐️⭐️愛你🌹</div>
+                <div class="footer neon-text fair-title" style="font-size:3.5rem;">5/9 記得要來<br>綜二1 喔喔⭐️</div>
                 <img src="67.gif" alt="67.gif" class="fair-img" style="max-width:100%; border-radius:25px; border:4px solid var(--border-color); margin-top:20px;" onerror="this.style.display='none'">
                 <br>
                 <a href="https://www.instagram.com/hccvs_da21?igsh=MWdmNHp6aTdkbTAxaQ==" target="_blank" class="fair-btn" style="display:inline-block; margin-top:30px; padding:20px 40px; background:linear-gradient(45deg,#f09433,#bc1888); color:white; text-decoration:none; border-radius:50px; font-size:1.8rem; font-weight:bold;">快來看看吧</a>
@@ -361,23 +361,19 @@
             }
         }
 
-        // 強化相容性的全螢幕功能
         function goFullscreen() {
             const gameFrame = document.getElementById('dino-frame');
-            
             try {
                 if (gameFrame.requestFullscreen) {
                     gameFrame.requestFullscreen();
-                } else if (gameFrame.webkitRequestFullscreen) { /* 支援 Safari/iOS */
+                } else if (gameFrame.webkitRequestFullscreen) {
                     gameFrame.webkitRequestFullscreen();
-                } else if (gameFrame.msRequestFullscreen) { /* 支援早期 IE */
+                } else if (gameFrame.msRequestFullscreen) {
                     gameFrame.msRequestFullscreen();
                 }
-
-                // 嘗試將螢幕轉為橫向
                 if (screen.orientation && screen.orientation.lock) {
                     screen.orientation.lock('landscape').catch(function(error) {
-                        console.log('自動轉向被瀏覽器阻擋，請手動旋轉手機橫置喔！');
+                        console.log('自動轉向失敗');
                     });
                 }
             } catch (err) {
