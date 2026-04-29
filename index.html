@@ -184,7 +184,7 @@
             .sidebar { padding-top: 220px; }
             
             #fair-content, #dino-content { max-width: 100% !important; width: 95%; }
-            .fair-title { font-size: 6rem !important; margin-bottom: 40px; }
+            .fair-title { font-size: 5rem !important; margin-bottom: 40px; }
             .fair-img { max-width: 900px !important; width: 100%; border-width: 8px !important; }
             .fair-btn { font-size: 3rem !important; padding: 30px 80px !important; margin-top: 50px !important; }
             
@@ -251,7 +251,7 @@
 
         <div id="fair-content" class="container" style="display:none;">
             <div style="text-align:center;">
-                <div class="footer neon-text fair-title" style="font-size:3.5rem;">5/9 記得要來<br>綜二1 喔喔⭐️</div>
+                <div class="footer neon-text fair-title" style="font-size:3.5rem; line-height: 1.5;">5/9 記得要來<br>綜二1 喔喔⭐️<br>愛你💗🌹</div>
                 <img src="67.gif" alt="67.gif" class="fair-img" style="max-width:100%; border-radius:25px; border:4px solid var(--border-color); margin-top:20px;" onerror="this.style.display='none'">
                 <br>
                 <a href="https://www.instagram.com/hccvs_da21?igsh=MWdmNHp6aTdkbTAxaQ==" target="_blank" class="fair-btn" style="display:inline-block; margin-top:30px; padding:20px 40px; background:linear-gradient(45deg,#f09433,#bc1888); color:white; text-decoration:none; border-radius:50px; font-size:1.8rem; font-weight:bold;">快來看看吧</a>
@@ -266,9 +266,7 @@
         <div id="dino-content" class="container" style="display:none; text-align:center;">
             <div class="footer neon-text" style="font-size:3.5rem; margin-bottom:20px;">Dino-game</div>
             
-            <button class="tool-btn" style="margin-bottom: 20px; padding: 15px 30px; border-radius: 50px;" onclick="goFullscreen()">🔲 全螢幕爽玩</button>
-            
-            <iframe id="dino-frame" src="https://t-rex.vercel.app/" width="100%" height="200px" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" style="border:4px solid var(--border-color); border-radius:20px; background:white; box-shadow: var(--neon-glow); display:block; margin: 0 auto;"></iframe>
+            <iframe src="https://t-rex.vercel.app/" width="100%" height="200px" scrolling="no" style="border:4px solid var(--border-color); border-radius:20px; background:white; box-shadow: var(--neon-glow); display:block; margin: 0 auto;"></iframe>
             
             <div class="footer-group" style="margin-top:60px;">
                 <div class="footer neon-text">承蔚老帥了</div>
@@ -358,26 +356,6 @@
                 document.getElementById('main-content').style.display = 'block';
                 document.getElementById('section-classic').style.display = (type === 'classic') ? 'block' : 'none';
                 document.getElementById('section-modern').style.display = (type === 'modern') ? 'block' : 'none';
-            }
-        }
-
-        function goFullscreen() {
-            const gameFrame = document.getElementById('dino-frame');
-            try {
-                if (gameFrame.requestFullscreen) {
-                    gameFrame.requestFullscreen();
-                } else if (gameFrame.webkitRequestFullscreen) {
-                    gameFrame.webkitRequestFullscreen();
-                } else if (gameFrame.msRequestFullscreen) {
-                    gameFrame.msRequestFullscreen();
-                }
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(function(error) {
-                        console.log('自動轉向失敗');
-                    });
-                }
-            } catch (err) {
-                console.log("全螢幕發生錯誤：" + err.message);
             }
         }
 
