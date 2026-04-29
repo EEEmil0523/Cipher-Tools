@@ -183,7 +183,7 @@
             .sidebar-link { font-size: 4rem; margin: 50px 0; }
             .sidebar { padding-top: 220px; }
             
-            #fair-content { max-width: 100% !important; width: 95%; }
+            #fair-content, #dino-content { max-width: 100% !important; width: 95%; }
             .fair-title { font-size: 6rem !important; margin-bottom: 40px; }
             .fair-img { max-width: 900px !important; width: 100%; border-width: 8px !important; }
             .fair-btn { font-size: 3rem !important; padding: 30px 80px !important; margin-top: 50px !important; }
@@ -217,6 +217,7 @@
             <a href="#" class="sidebar-link" onclick="showSection('classic')">Classical</a>
             <a href="#" class="sidebar-link" onclick="showSection('modern')">Modern</a>
             <a href="#" class="sidebar-link" onclick="showSection('fair')">竹商園遊會</a>
+            <a href="#" class="sidebar-link" onclick="showSection('dino')">小恐龍遊戲</a>
             <div class="footer-group" style="margin-top:auto; padding-bottom: 50px;">
                 <div class="footer neon-text">承蔚老帥了</div>
                 <div class="footer neon-text">東錦老奶了</div>
@@ -259,6 +260,18 @@
                     <div class="footer neon-text">東錦老奶了</div>
                     <div class="footer neon-text">晉安老奶了</div>
                 </div>
+            </div>
+        </div>
+
+        <div id="dino-content" class="container" style="display:none; text-align:center;">
+            <div class="footer neon-text" style="font-size:3.5rem; margin-bottom:20px;">Dinosaur Run</div>
+            
+            <iframe src="https://t-rex.vercel.app/" width="100%" height="500px" style="border:4px solid var(--border-color); border-radius:20px; background:white; box-shadow: var(--neon-glow);"></iframe>
+            
+            <div class="footer-group" style="margin-top:60px;">
+                <div class="footer neon-text">承蔚老帥了</div>
+                <div class="footer neon-text">東錦老奶了</div>
+                <div class="footer neon-text">晉安老奶了</div>
             </div>
         </div>
     </div>
@@ -329,9 +342,19 @@
 
         function showSection(type) {
             if (document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
-            document.getElementById('main-content').style.display = (type === 'fair') ? 'none' : 'block';
-            document.getElementById('fair-content').style.display = (type === 'fair') ? 'block' : 'none';
-            if (type !== 'fair') {
+            
+            // 先隱藏所有區塊
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('fair-content').style.display = 'none';
+            document.getElementById('dino-content').style.display = 'none';
+
+            // 根據類型顯示對應區塊
+            if (type === 'fair') {
+                document.getElementById('fair-content').style.display = 'block';
+            } else if (type === 'dino') {
+                document.getElementById('dino-content').style.display = 'block';
+            } else {
+                document.getElementById('main-content').style.display = 'block';
                 document.getElementById('section-classic').style.display = (type === 'classic') ? 'block' : 'none';
                 document.getElementById('section-modern').style.display = (type === 'modern') ? 'block' : 'none';
             }
