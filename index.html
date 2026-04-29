@@ -32,7 +32,7 @@
         body, html { 
             background: var(--bg-color); color: var(--text-color); 
             font-family: 'Segoe UI', monospace; margin: 0; padding: 0;
-            width: 100%; height: 100%;
+            width: 100%; min-height: 100vh; /* 這裡修改為 min-height: 100vh */
         }
 
         /* ===== 頂部固定眼睛區 ===== */
@@ -332,7 +332,9 @@
             updatePupilPosition(xOffset, yOffset);
         }
 
-        function toggleTheme() { document.body.classList.toggle('light-mode'); }
+        /* 這裡修改為 document.documentElement */
+        function toggleTheme() { document.documentElement.classList.toggle('light-mode'); }
+        
         function toggleSidebar() { 
             const sidebar = document.getElementById('sidebar');
             const menuBtn = document.getElementById('menu-btn');
